@@ -623,6 +623,12 @@ const UI = {
     vennPrompt: "Kelompokkan faktor prima dari {a} dan {b}!",
     onlyLabel: "Hanya {n}",
     bothLabel: "Keduanya",
+    fracKindPrompt: "Kelompokkan setiap pecahan: wajar atau tidak wajar?",
+    properLabel: "Wajar",
+    improperLabel: "Tidak Wajar",
+    fracMixedMatchPrompt: "Pasangkan pecahan tidak wajar dengan bilangan campurannya!",
+    fracNumberLinePrompt: "Letakkan pecahan <b>{frac}</b> pada garis bilangan!",
+    equivTablePrompt: "Lengkapi pecahan senilai ini!",
   },
   en: {
     backToMap: "← Back to map",
@@ -724,6 +730,12 @@ const UI = {
     vennPrompt: "Sort the prime factors of {a} and {b}!",
     onlyLabel: "Only {n}",
     bothLabel: "Both",
+    fracKindPrompt: "Sort each fraction: proper or improper?",
+    properLabel: "Proper",
+    improperLabel: "Improper",
+    fracMixedMatchPrompt: "Match each improper fraction with its mixed number!",
+    fracNumberLinePrompt: "Place the fraction <b>{frac}</b> on the number line!",
+    equivTablePrompt: "Fill in this equivalent fraction!",
   },
   ru: {
     backToMap: "← Назад к карте",
@@ -825,6 +837,12 @@ const UI = {
     vennPrompt: "Раздели простые множители чисел {a} и {b}!",
     onlyLabel: "Только {n}",
     bothLabel: "Оба",
+    fracKindPrompt: "Раздели дроби: правильная или неправильная?",
+    properLabel: "Правильная",
+    improperLabel: "Неправильная",
+    fracMixedMatchPrompt: "Соедини неправильную дробь с её смешанным числом!",
+    fracNumberLinePrompt: "Отметь дробь <b>{frac}</b> на числовой прямой!",
+    equivTablePrompt: "Заполни эту равную дробь!",
   },
 };
 
@@ -1430,6 +1448,88 @@ function genFOrderRound() {
   const asc = Math.random() < 0.6;
   const sorted = [...list].sort((x, y) => asc ? x.num / x.den - y.num / y.den : y.num / y.den - x.num / x.den);
   return { list: shuffle(list), sorted, asc };
+}
+
+/* ==========================================================================
+   KELAS 5 — "Pecahan" topic generators (Lessons 24-32): proper/improper,
+   mixed numbers, number-line placement, equivalence, harder compare/order.
+   ========================================================================== */
+function genFCompare5Round() {
+  const d1 = randInt(2, 12), d2 = randInt(2, 12);
+  const n1 = randInt(1, d1 - 1), n2 = randInt(1, d2 - 1);
+  const a = { num: n1, den: d1 }, b = { num: n2, den: d2 };
+  const av = n1 / d1, bv = n2 / d2;
+  const sign = av < bv ? "<" : av > bv ? ">" : "=";
+  return { a, b, sign };
+}
+function genFOrder5Round() {
+  const count = randInt(3, 4);
+  const dens = new Set();
+  while (dens.size < count) dens.add(randInt(2, 12));
+  const list = [...dens].map(d => ({ num: randInt(1, d - 1), den: d }));
+  const asc = Math.random() < 0.6;
+  const sorted = [...list].sort((x, y) => asc ? x.num / x.den - y.num / y.den : y.num / y.den - x.num / x.den);
+  return { list: shuffle(list), sorted, asc };
+}
+function genFracKindRound() {
+  const items = [];
+  for (let i = 0; i < 4; i++) {
+    const den = randInt(3, 10);
+    const isImproper = Math.random() < 0.5;
+    const num = isImproper ? randInt(den, den * 2) : randInt(1, den - 1);
+    items.push({ label: `${num}/${den}`, correctBin: isImproper ? "tidakwajar" : "wajar" });
+  }
+  return {
+    mode: "sortbins", venn: false, promptKey: "fracKindPrompt", items,
+    bins: [{ labelKey: "properLabel", key: "wajar" }, { labelKey: "improperLabel", key: "tidakwajar" }],
+  };
+}
+function toMixedStr(num, den) {
+  const whole = Math.floor(num / den), rem = num % den;
+  return rem === 0 ? String(whole) : `${whole} ${rem}/${den}`;
+}
+function genFracMixedMatchRound() {
+  const pairs = [];
+  const used = new Set();
+  while (pairs.length < 3) {
+    const den = randInt(2, 8);
+    const whole = randInt(1, 3);
+    const rem = randInt(1, den - 1);
+    const num = whole * den + rem;
+    const key = `${num}/${den}`;
+    if (used.has(key)) continue;
+    used.add(key);
+    pairs.push({ leftHtml: `${num}/${den}`, rightHtml: toMixedStr(num, den) });
+  }
+  const rightOrder = shuffle(pairs.map((_, i) => i));
+  return { mode: "match", promptKey: "fracMixedMatchPrompt", pairs, rightOrder };
+}
+function genFracNumberLineRound() {
+  const den = [3, 4, 5, 6, 8][randInt(0, 4)];
+  const maxUnits = den * 2;
+  const correctNum = randInt(1, maxUnits - 1);
+  const ticks = new Set([correctNum]);
+  const tickTarget = Math.min(4, maxUnits - 1);
+  while (ticks.size < tickTarget) ticks.add(randInt(1, maxUnits - 1));
+  const tickArr = [...ticks].sort((a, b) => a - b);
+  const correctIdx = tickArr.indexOf(correctNum);
+  return {
+    mode: "numberline", promptKey: "fracNumberLinePrompt", promptVars: { frac: `${correctNum}/${den}` },
+    min: 0, max: maxUnits, ticks: tickArr, tickLabels: tickArr.map(v => `${v}/${den}`), correctIdx,
+  };
+}
+function genEquivTableRound() {
+  const den1 = randInt(2, 6), num1 = randInt(1, den1 - 1);
+  const mult = randInt(2, 4);
+  const den2 = den1 * mult, num2 = num1 * mult;
+  const cellValues = [fmt(num1), "/", fmt(den1), "=", null, "/", fmt(den2)];
+  const correct = [fmt(num2)];
+  const decoyA = num2 + 1, decoyB = num2 - 1 > 0 ? num2 - 1 : num2 + 2;
+  return { mode: "table", promptKey: "equivTablePrompt", cols: 7, cellValues, correct, decoys: [fmt(decoyA), fmt(decoyB)] };
+}
+function genPecahanBossRound() {
+  const gens = [genFracKindRound, genFCompare5Round];
+  return gens[randInt(0, gens.length - 1)]();
 }
 
 /* Station 3 "Pecahan Senilai" — spot the equivalent pie model (L11). */
@@ -2236,6 +2336,13 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "fpb") rounds.push(genFpbRound());
     else if (lvl.type === "primevenn") rounds.push(genPrimeVennRound());
     else if (lvl.type === "kpkfpbboss") rounds.push(genKpkFpbBossRound());
+    else if (lvl.type === "frackind") rounds.push(genFracKindRound());
+    else if (lvl.type === "fracmixedmatch") rounds.push(genFracMixedMatchRound());
+    else if (lvl.type === "fracline") rounds.push(genFracNumberLineRound());
+    else if (lvl.type === "equivtable") rounds.push(genEquivTableRound());
+    else if (lvl.type === "fcompare5") rounds.push(genFCompare5Round());
+    else if (lvl.type === "forder5") rounds.push(genFOrder5Round());
+    else if (lvl.type === "pecahanboss") rounds.push(genPecahanBossRound());
   }
   return rounds;
 }
@@ -2291,6 +2398,30 @@ const LEVELS_KPKFPB = [
     desc: { id: "Level BOS — semua jebakan campur!", en: "BOSS level — all traps mixed!", ru: "Уровень БОСС — все ловушки вперемешку!" } },
 ];
 
+const LEVELS_PECAHAN5 = [
+  { id: 1, emoji: "🔀", color: "l1", type: "frackind",
+    name: { id: "Wajar & Tidak Wajar", en: "Proper & Improper", ru: "Правильные и нет" },
+    desc: { id: "Kelompokkan jenis pecahannya", en: "Sort the fraction types", ru: "Раздели по типу дроби" } },
+  { id: 2, emoji: "🔗", color: "l2", type: "fracmixedmatch",
+    name: { id: "Pecahan ⇄ Campuran", en: "Fraction ⇄ Mixed Number", ru: "Дробь ⇄ Смешанное число" },
+    desc: { id: "Pasangkan bentuknya", en: "Match the equivalent forms", ru: "Соедини равные формы" } },
+  { id: 3, emoji: "📏", color: "l3", type: "fracline",
+    name: { id: "Garis Bilangan", en: "Number Line", ru: "Числовая прямая" },
+    desc: { id: "Letakkan pecahan di tempatnya", en: "Place the fraction correctly", ru: "Размести дробь на прямой" } },
+  { id: 4, emoji: "🟰", color: "l5", type: "equivtable",
+    name: { id: "Pecahan Senilai", en: "Equivalent Fractions", ru: "Равные дроби" },
+    desc: { id: "Lengkapi pecahan senilai", en: "Complete the equivalent fraction", ru: "Заполни равную дробь" } },
+  { id: 5, emoji: "⚖️", color: "l6", type: "fcompare5",
+    name: { id: "Bandingkan Pecahan", en: "Compare Fractions", ru: "Сравнивай дроби" },
+    desc: { id: "Penyebut sama atau beda", en: "Same or different denominators", ru: "Разные знаменатели тоже" } },
+  { id: 6, emoji: "📶", color: "l1", type: "forder5",
+    name: { id: "Urutkan Pecahan", en: "Order Fractions", ru: "Расставляй дроби" },
+    desc: { id: "Susun dari kecil ke besar", en: "Arrange smallest to largest", ru: "От меньшей к большей" } },
+  { id: 7, emoji: "🕵️", color: "l4", type: "pecahanboss",
+    name: { id: "Detektif Pecahan", en: "Fraction Detective", ru: "Детектив дробей" },
+    desc: { id: "Level BOS — semua jebakan pecahan!", en: "BOSS level — all fraction traps!", ru: "Уровень БОСС — все ловушки с дробями!" } },
+];
+
 const TOPICS_BILANGAN5 = [
   {
     id: "cacah100rb", emoji: "🏰", levels: LEVELS_CACAH100RB,
@@ -2312,13 +2443,23 @@ const TOPICS_BILANGAN5 = [
       ru: "Игра генерирует бесконечное число новых заданий для всех 9 уроков темы «НОК и НОД» (Класс 5, роутер математики, G5-L15 — G5-L23).",
     },
   },
+  {
+    id: "pecahan5", emoji: "🥧", levels: LEVELS_PECAHAN5,
+    name: { id: "Pasar Pecahan Besar", en: "Big Fraction Market", ru: "Большой Рынок Дробей" },
+    subtitle: { id: "Pecahan (9 pelajaran)", en: "Fractions (9 lessons)", ru: "Дроби (9 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 9 pelajaran topik \"Pecahan\" (Kelas 5, Router Matematika, G5-L24 s/d G5-L32).",
+      en: "This game generates unlimited new questions for all 9 lessons of the \"Fractions\" topic (Grade 5 Math Router, G5-L24 to G5-L32).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 9 уроков темы «Дроби» (Класс 5, роутер математики, G5-L24 — G5-L32).",
+    },
+  },
 ];
 
 const BLOCKS = [
   {
     id: "bilangan", emoji: "🔢", topics: TOPICS_BILANGAN5,
     name: { id: "Bilangan", en: "Numbers", ru: "Числа" },
-    desc: { id: "2 distrik · 14 stasiun", en: "2 districts · 14 stations", ru: "2 района · 14 станций" },
+    desc: { id: "3 distrik · 21 stasiun", en: "3 districts · 21 stations", ru: "3 района · 21 станция" },
     story: { key: "kingdomStoryK5" },
   },
 ];
@@ -2364,6 +2505,8 @@ const CHARACTER_BY_TYPE = {
   read5: "robi", write5: "robi", placevalue5: "dara", compare5: "kumar", order5: "kumar", mixed5: "baron",
   multiples: "kumar", factortable: "dara", primegrid: "nina", primematch: "dara",
   kpk: "kumar", fpb: "kumar", primevenn: "nina", kpkfpbboss: "baron",
+  frackind: "nina", fracmixedmatch: "dara", fracline: "kumar", equivtable: "dara",
+  fcompare5: "kumar", forder5: "kumar", pecahanboss: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -2385,11 +2528,12 @@ const IMAGES = {
 };
 const DISTRICT_IMAGES = {
   cacah100rb: IMAGES.kotaAngka,
+  pecahan5: IMAGES.pasarPecahan,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -2665,7 +2809,7 @@ function setupRound() {
     state.sortSelected = null;
   } else if (r.mode === "truegrid") {
     state.gridChecked = {};
-  } else if (lvl.type === "order" || lvl.type === "forder" || lvl.type === "order5" || lvl.type === "sequence") {
+  } else if (lvl.type === "order" || lvl.type === "forder" || lvl.type === "order5" || lvl.type === "forder5" || lvl.type === "sequence") {
     state.orderPicked = [];
   } else if (lvl.type === "placevalue" && r.kind === "expanded") {
     state.pool = shuffle([...r.correct, ...r.decoys]);
@@ -2754,6 +2898,13 @@ function renderLevel() {
   else if (lvl.type === "sequence") container.appendChild(renderSequence(lvl));
   else if (lvl.type === "kpk" || lvl.type === "fpb") container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "kpkfpbboss") container.appendChild(renderKpkFpbBoss(lvl));
+  else if (lvl.type === "frackind") container.appendChild(renderSortBins(lvl));
+  else if (lvl.type === "fracmixedmatch") container.appendChild(renderMatch(lvl));
+  else if (lvl.type === "fracline") container.appendChild(renderNumberLine(lvl));
+  else if (lvl.type === "equivtable") container.appendChild(renderTable(lvl));
+  else if (lvl.type === "fcompare5") container.appendChild(renderFCompare(lvl));
+  else if (lvl.type === "forder5") container.appendChild(renderFOrder(lvl));
+  else if (lvl.type === "pecahanboss") container.appendChild(renderPecahanBoss(lvl));
 
   return container;
 }
@@ -4321,7 +4472,8 @@ function renderNumberLine(lvl) {
     const tick = document.createElement("div");
     tick.className = "number-line-tick";
     tick.style.left = pct + "%";
-    tick.innerHTML = `<div class="tick-mark"></div><div class="tick-label">${fmt(val)}</div>`;
+    const label = r.tickLabels ? r.tickLabels[idx] : fmt(val);
+    tick.innerHTML = `<div class="tick-mark"></div><div class="tick-label">${label}</div>`;
     tick.onclick = () => checkNumberLine(r, idx, tick);
     line.appendChild(tick);
   });
@@ -4395,6 +4547,11 @@ function renderKpkFpbBoss(lvl) {
   if (r.mode === "multiselect") return renderMultiSelect(lvl);
   if (r.mode === "truegrid") return renderTrueGrid(lvl);
   return renderAssemble(lvl);
+}
+function renderPecahanBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.mode === "sortbins") return renderSortBins(lvl);
+  return renderFCompare(lvl);
 }
 
 function renderShapeMc(lvl) {
