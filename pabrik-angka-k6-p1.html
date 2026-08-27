@@ -189,7 +189,7 @@
   .hotspot-spot {
     position: absolute; transform: translate(-50%, -50%);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
-    min-width: 38px; padding: 3px 8px; border-radius: 10px;
+    min-width: 38px; max-width: 92px; padding: 3px 8px; border-radius: 10px;
     border: 2px solid var(--ink); background: var(--paper); color: var(--ink);
     font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 12px; text-align: center;
     cursor: pointer; box-shadow: 2.5px 2.5px 0 var(--shadow-col);
@@ -628,6 +628,37 @@ const UI = {
     bilanganStoryK6: "🔢 <b>Pasar Pecahan Besar</b>: Kelas 6 dimulai! <b>Baron Nol</b> mengacaukan operasi pecahan dan desimal di kerajaan. Bantu Pedagang Kumar &amp; Arsitek Dara meluruskannya di setiap distrik.",
     rasioStoryK6: "⚖️ <b>Pasar Rasio &amp; Proporsi</b>: <b>Baron Nol</b> mengacaukan perbandingan dan resep kerajaan! Bantu Pedagang Kumar &amp; Koki Nina menyeimbangkan semuanya kembali.",
     durasiStoryK6: "⏱️ <b>Menara Jam Kerajaan</b>: <b>Baron Nol</b> mengacaukan jam dan jadwal di seluruh kerajaan! Bantu Robi &amp; Arsitek Dara meluruskan waktu di setiap distrik.",
+    geometriStoryK6: "📦 <b>Bengkel Bangun Ruang</b>: <b>Baron Nol</b> mengacaukan jaring-jaring dan koordinat kerajaan! Bantu Arsitek Dara &amp; Pedagang Kumar merapikan semuanya di setiap distrik.",
+    peluangStoryK6: "🎲 <b>Kasino Kerajaan Peluang</b>: <b>Baron Nol</b> mengacak-acak dadu dan koin kerajaan! Bantu Koki Nina &amp; Robi menghitung peluang yang sebenarnya.",
+    kubusNetCountPrompt: "Berapa persegi diperlukan untuk jaring-jaring ini?",
+    kubusNetValidPrompt: "Apakah ini jaring-jaring kubus yang valid?",
+    kubusCiriPrompt: "Lengkapi ciri-ciri bangun {shape} ini!",
+    spasialTampakPrompt: "Jika {solid} ini dilihat dari depan, bentuk 2D apa yang terlihat?",
+    spasialMatchPrompt: "Pilih ukuran tampak atas yang cocok dengan gambar ini!",
+    spasialRotateQ1: "Jika bangun ini diputar, apakah jumlah kubusnya berubah?",
+    spasialRotateQ2: "Jika bangun ini dicerminkan (dibalik), apakah jumlah kubusnya berubah?",
+    spasialRotateQ3: "Jika satu kubus baru ditambahkan ke bangun ini, apakah jumlah kubusnya berubah?",
+    gridBacaPrompt: "Di mana letak titik ini? (format huruf-angka)",
+    gridKoordinatPrompt: "Berapa koordinat titik ini?",
+    gridLangkahPrompt: "Langkah apa dari titik awal ke titik ini?",
+    gridRutePrompt: "Mulai dari ({x}, {y}), bergerak {steps} ke {dir}. Posisi akhir?",
+    gridJarakPrompt: "Berapa jarak antara dua titik ini?",
+    gridTotalPrompt: "Berapa jarak total dari semua langkah ini?",
+    certSunrise: "Matahari terbit besok.",
+    certDieSeven: "Muncul mata dadu 7 saat dilempar sekali.",
+    certRain: "Besok akan hujan di kotamu.",
+    certCoinHead: "Koin yang dilempar menunjukkan sisi angka.",
+    certMonthDays: "Bulan Februari punya kurang dari 30 hari.",
+    certFish: "Ikan bisa terbang tinggi seperti burung.",
+    certaintyPasti: "Pasti", certaintyMungkin: "Mungkin", certaintyTidakMungkin: "Tidak Mungkin",
+    certaintyScale0: "0 (Tidak Mungkin)", certaintyScaleMid: "Antara 0 dan 1", certaintyScale1: "1 (Pasti)",
+    peluangKlasifikasiPrompt: "Klasifikasikan pernyataan ini!",
+    peluangSkalaPrompt: "Berapa peluang kejadian ini pada skala 0 sampai 1?",
+    peluangDaftarDaduPrompt: "Pilih SEMUA hasil yang mungkin dari pelemparan satu dadu!",
+    peluangDaftarKoinPrompt: "Pilih SEMUA hasil yang mungkin dari pelemparan satu koin!",
+    peluangPohonCoinCoin: "Sebuah koin dilempar 2 kali. Ada berapa total kemungkinan hasil?",
+    peluangPohonCoinDie: "Sebuah koin dan sebuah dadu masing-masing dilempar sekali. Ada berapa total kemungkinan hasil?",
+    peluangBandingPrompt: "Peluang mana yang lebih besar? Ketuk tanda yang benar!",
     dataStory: "📊 <b>Balai Data</b>: <b>Baron Nol</b> mengacaukan catatan dan grafik kerajaan! Bantu Koki Nina &amp; Pedagang Kumar merapikan datanya di setiap distrik.",
     matchPrompt: "Pasangkan setiap kartu di kiri dengan pasangannya di kanan!",
     tablePrompt: "Lengkapi tabel yang kosong!",
@@ -762,6 +793,37 @@ const UI = {
     bilanganStoryK6: "🔢 <b>Grand Fraction Market</b>: Grade 6 begins! <b>Baron Zero</b> is scrambling fraction operations and decimals across the kingdom. Help Trader Kumar &amp; Architect Dara straighten it out in every district.",
     rasioStoryK6: "⚖️ <b>Ratio &amp; Proportion Market</b>: <b>Baron Zero</b> is scrambling the kingdom's comparisons and recipes! Help Trader Kumar &amp; Baker Nina balance everything back out.",
     durasiStoryK6: "⏱️ <b>Royal Clock Tower</b>: <b>Baron Zero</b> is scrambling clocks and schedules across the kingdom! Help Robi &amp; Architect Dara set time straight in every district.",
+    geometriStoryK6: "📦 <b>Solids Workshop</b>: <b>Baron Zero</b> is scrambling the kingdom's nets and coordinates! Help Architect Dara &amp; Trader Kumar tidy it all up in every district.",
+    peluangStoryK6: "🎲 <b>Kingdom of Chance</b>: <b>Baron Zero</b> is shuffling the kingdom's dice and coins! Help Baker Nina &amp; Robi work out the real odds.",
+    kubusNetCountPrompt: "How many squares does this net need?",
+    kubusNetValidPrompt: "Is this a valid cube net?",
+    kubusCiriPrompt: "Complete the properties of this {shape}!",
+    spasialTampakPrompt: "If you look at this {solid} from the front, what 2D shape do you see?",
+    spasialMatchPrompt: "Pick the top-view size that matches this picture!",
+    spasialRotateQ1: "If this solid is rotated, does its cube count change?",
+    spasialRotateQ2: "If this solid is mirrored (flipped), does its cube count change?",
+    spasialRotateQ3: "If one new cube is added to this solid, does its cube count change?",
+    gridBacaPrompt: "Where is this point located? (letter-number format)",
+    gridKoordinatPrompt: "What are the coordinates of this point?",
+    gridLangkahPrompt: "What are the steps from the origin to this point?",
+    gridRutePrompt: "Starting at ({x}, {y}), move {steps} spaces {dir}. What's the final position?",
+    gridJarakPrompt: "What's the distance between these two points?",
+    gridTotalPrompt: "What's the total distance across all these steps?",
+    certSunrise: "The sun will rise tomorrow.",
+    certDieSeven: "Rolling a 7 on a single die roll.",
+    certRain: "It will rain in your city tomorrow.",
+    certCoinHead: "A tossed coin lands on heads.",
+    certMonthDays: "February has fewer than 30 days.",
+    certFish: "A fish can fly high like a bird.",
+    certaintyPasti: "Certain", certaintyMungkin: "Possible", certaintyTidakMungkin: "Impossible",
+    certaintyScale0: "0 (Impossible)", certaintyScaleMid: "Between 0 and 1", certaintyScale1: "1 (Certain)",
+    peluangKlasifikasiPrompt: "Classify this statement!",
+    peluangSkalaPrompt: "What is the probability of this event on a 0-to-1 scale?",
+    peluangDaftarDaduPrompt: "Select ALL the possible outcomes of rolling one die!",
+    peluangDaftarKoinPrompt: "Select ALL the possible outcomes of tossing one coin!",
+    peluangPohonCoinCoin: "A coin is tossed twice. How many total possible outcomes are there?",
+    peluangPohonCoinDie: "A coin and a die are each thrown once. How many total possible outcomes are there?",
+    peluangBandingPrompt: "Which probability is bigger? Tap the correct sign!",
     dataStory: "📊 <b>Data Hall</b>: <b>Baron Zero</b> is scrambling the kingdom's records and charts! Help Baker Nina &amp; Trader Kumar tidy up the data in every district.",
     matchPrompt: "Match each card on the left with its pair on the right!",
     tablePrompt: "Fill in the blank cells of the table!",
@@ -896,6 +958,37 @@ const UI = {
     bilanganStoryK6: "🔢 <b>Большой рынок дробей</b>: Начинается 6 класс! <b>Барон Ноль</b> путает операции с дробями и десятичными числами по всему королевству. Помоги Торговцу Кумару и Архитектору Даре навести порядок в каждом районе.",
     rasioStoryK6: "⚖️ <b>Рынок отношений и пропорций</b>: <b>Барон Ноль</b> путает сравнения и рецепты королевства! Помоги Торговцу Кумару и Пекарю Нине снова всё уравновесить.",
     durasiStoryK6: "⏱️ <b>Королевская часовая башня</b>: <b>Барон Ноль</b> путает часы и расписания по всему королевству! Помоги Роби и Архитектору Даре навести порядок со временем в каждом районе.",
+    geometriStoryK6: "📦 <b>Мастерская фигур</b>: <b>Барон Ноль</b> путает развёртки и координаты королевства! Помоги Архитектору Даре и Торговцу Кумару навести порядок в каждом районе.",
+    peluangStoryK6: "🎲 <b>Королевство вероятности</b>: <b>Барон Ноль</b> перемешал кости и монеты королевства! Помоги Пекарю Нине и Роби вычислить настоящие шансы.",
+    kubusNetCountPrompt: "Сколько квадратов нужно для этой развёртки?",
+    kubusNetValidPrompt: "Это правильная развёртка куба?",
+    kubusCiriPrompt: "Заполни свойства этой фигуры: {shape}!",
+    spasialTampakPrompt: "Если посмотреть на эту фигуру ({solid}) спереди, какую 2D-форму ты увидишь?",
+    spasialMatchPrompt: "Выбери размер вида сверху, который соответствует этой картинке!",
+    spasialRotateQ1: "Если эту фигуру повернуть, изменится ли количество кубиков?",
+    spasialRotateQ2: "Если эту фигуру отразить (перевернуть), изменится ли количество кубиков?",
+    spasialRotateQ3: "Если добавить один новый кубик к этой фигуре, изменится ли количество кубиков?",
+    gridBacaPrompt: "Где находится эта точка? (формат буква-цифра)",
+    gridKoordinatPrompt: "Какие координаты у этой точки?",
+    gridLangkahPrompt: "Какие шаги от начала координат до этой точки?",
+    gridRutePrompt: "Начни в точке ({x}, {y}), сделай {steps} шагов {dir}. Какая конечная позиция?",
+    gridJarakPrompt: "Каково расстояние между этими двумя точками?",
+    gridTotalPrompt: "Каково общее расстояние всех этих шагов?",
+    certSunrise: "Завтра взойдёт солнце.",
+    certDieSeven: "Выпадет 7 при одном броске кубика.",
+    certRain: "Завтра в твоём городе пойдёт дождь.",
+    certCoinHead: "Подброшенная монета упадёт орлом.",
+    certMonthDays: "В феврале меньше 30 дней.",
+    certFish: "Рыба может летать высоко, как птица.",
+    certaintyPasti: "Достоверно", certaintyMungkin: "Возможно", certaintyTidakMungkin: "Невозможно",
+    certaintyScale0: "0 (Невозможно)", certaintyScaleMid: "Между 0 и 1", certaintyScale1: "1 (Достоверно)",
+    peluangKlasifikasiPrompt: "Классифицируй это утверждение!",
+    peluangSkalaPrompt: "Какова вероятность этого события по шкале от 0 до 1?",
+    peluangDaftarDaduPrompt: "Выбери ВСЕ возможные исходы броска одного кубика!",
+    peluangDaftarKoinPrompt: "Выбери ВСЕ возможные исходы броска одной монеты!",
+    peluangPohonCoinCoin: "Монету подбрасывают 2 раза. Сколько всего возможных исходов?",
+    peluangPohonCoinDie: "Монету и кубик бросают по одному разу. Сколько всего возможных исходов?",
+    peluangBandingPrompt: "Какая вероятность больше? Нажми на правильный знак!",
     dataStory: "📊 <b>Зал данных</b>: <b>Барон Ноль</b> путает записи и графики королевства! Помоги Пекарю Нине и Торговцу Кумару навести порядок в данных каждого района.",
     matchPrompt: "Соедини каждую карточку слева с парой справа!",
     tablePrompt: "Заполни пустые ячейки таблицы!",
@@ -3235,6 +3328,374 @@ function genWaktuBossRound() {
 }
 
 /* ==========================================================================
+   KELAS 6 — Geometri block: Kubus & balok (Lessons 26-30), Visualisasi
+   spasial (Lessons 31-34), Sistem berpetak dan lokasi (Lessons 35-41).
+   ========================================================================== */
+function netSVG(cells) {
+  const cellSize = 26;
+  const maxRow = Math.max(...cells.map(c => c[0])), maxCol = Math.max(...cells.map(c => c[1]));
+  const w = (maxCol + 1) * cellSize, h = (maxRow + 1) * cellSize;
+  const color = shapeColor();
+  let rects = "";
+  cells.forEach(([r, c]) => {
+    rects += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize}" height="${cellSize}" fill="${color}" stroke="var(--ink)" stroke-width="2.5"/>`;
+  });
+  return `<svg viewBox="0 0 ${w} ${h}" width="${Math.min(150, w)}" height="${Math.round(Math.min(150, w) * h / w)}">${rects}</svg>`;
+}
+function rotateCells(cells, times) {
+  let cur = cells;
+  for (let t = 0; t < times; t++) {
+    const maxRow = Math.max(...cur.map(c => c[0]));
+    cur = cur.map(([r, c]) => [c, maxRow - r]);
+  }
+  return cur;
+}
+const CROSS_NET = [[0, 1], [1, 0], [1, 1], [1, 2], [1, 3], [2, 1]];
+const INVALID_NETS = [
+  [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5]],
+  [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]],
+];
+function genKubusNetRound() {
+  if (Math.random() < 0.5) {
+    const cells = rotateCells(CROSS_NET, randInt(0, 3));
+    const correct = "6".split("");
+    return { mode: "shapecount", svg: netSVG(cells), correct, decoys: digitDecoys(correct), promptKey: "kubusNetCountPrompt" };
+  }
+  const isValid = Math.random() < 0.5;
+  const cells = isValid ? rotateCells(CROSS_NET, randInt(0, 3)) : INVALID_NETS[randInt(0, INVALID_NETS.length - 1)];
+  return { kind: "net_yesno", svg: netSVG(cells), answer: isValid, promptKey: "kubusNetValidPrompt" };
+}
+function renderKubusNetValid(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t(r.promptKey)));
+  const wrap = document.createElement("div");
+  wrap.className = "shape-display";
+  wrap.innerHTML = r.svg;
+  panel.appendChild(wrap);
+  appendHotspotGrid(panel, lvl, [t("yesLabel"), t("noLabel")], (idx, cell) => checkYesNo(r, idx === 0, cell));
+  return panel;
+}
+function renderKubusNet(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.mode === "shapecount") return renderAssemble(lvl);
+  return renderKubusNetValid(lvl);
+}
+function genKubusGabunganRound() {
+  const a = randInt(3, 8), b = randInt(2, 6);
+  const correct = String(a + b).split("");
+  const text = `Bangun gabungan terdiri dari balok A sebanyak ${a} kubus dan balok B sebanyak ${b} kubus tanpa tumpang tindih. Berapa total kubus satuan?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genKubusCiriRound() {
+  const shapeName = Math.random() < 0.5 ? "kubus" : "balok";
+  const facts = [["Sisi", "6"], ["Rusuk", "12"], ["Titik sudut", "8"]];
+  const blankIdx = randInt(0, 2);
+  const cellValues = [];
+  facts.forEach((f, i) => { cellValues.push(f[0]); cellValues.push(i === blankIdx ? null : f[1]); });
+  const correct = [facts[blankIdx][1]];
+  const decoy1 = String(Number(facts[blankIdx][1]) + 2), decoy2 = String(Math.max(1, Number(facts[blankIdx][1]) - 2));
+  return { mode: "table", cols: 2, cellValues, correct, decoys: [decoy1, decoy2], promptKey: "kubusCiriPrompt", promptVars: { shape: shapeName } };
+}
+function genKubusBossRound() {
+  const gens = [genKubusNetRound, genVolumeRound, genKubusGabunganRound, genKubusCiriRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+function renderKubusBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.kind === "net_yesno") return renderKubusNetValid(lvl);
+  if (r.mode === "table") return renderTable(lvl);
+  return renderAssemble(lvl);
+}
+
+function renderSvgMc(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t(r.promptKey, r.promptVars)));
+  const wrap = document.createElement("div");
+  wrap.className = "shape-display";
+  wrap.innerHTML = r.svg;
+  panel.appendChild(wrap);
+  appendHotspotGrid(panel, lvl, r.options, (idx, cell, stage) => checkMc(r, idx, cell, stage));
+  return panel;
+}
+function genSpasialTampakRound() {
+  const solidName = Math.random() < 0.5 ? "kubus" : "balok";
+  const correct = solidName === "kubus" ? "persegi" : (Math.random() < 0.5 ? "persegi" : "persegipanjang");
+  const pool = ["persegi", "persegipanjang", "segitiga"];
+  const decoyTypes = pool.filter(p => p !== correct);
+  const optionTypes = shuffle([correct, ...decoyTypes]);
+  const labelKeyMap = { persegi: "shapeSquare", persegipanjang: "shapeRectangle", segitiga: "shapeTriangleN" };
+  return { kind: "shape_mc", optionTypes, correctIndex: optionTypes.indexOf(correct), labelKeyMap, promptKey: "spasialTampakPrompt", promptVars: { solid: solidName } };
+}
+function renderSpasialTampak(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t(r.promptKey, r.promptVars)));
+  appendHotspotGrid(panel, lvl, r.optionTypes.map(ot => t(r.labelKeyMap[ot])), (idx, cell, stage) => checkMc(r, idx, cell, stage));
+  return panel;
+}
+function genSpasialMatchRound() {
+  const rows = randInt(2, 4);
+  let cols = randInt(2, 4);
+  if (cols === rows) cols = rows === 4 ? rows - 1 : rows + 1;
+  const correct = `${cols}×${rows}`;
+  const decoy1 = `${rows}×${cols}`;
+  const decoy2 = `${cols}×${(rows % 4) + 1}`;
+  const options = shuffle([correct, decoy1, decoy2]);
+  const svg = gridSVG(cols, rows, cols * rows, { cell: 16, fill: shapeColor() });
+  return { svg, options, correctIndex: options.indexOf(correct), promptKey: "spasialMatchPrompt" };
+}
+function genSpasialRotateRound() {
+  const scenarios = [
+    { key: "spasialRotateQ1", answer: false },
+    { key: "spasialRotateQ2", answer: false },
+    { key: "spasialRotateQ3", answer: true },
+  ];
+  const picked = scenarios[randInt(0, scenarios.length - 1)];
+  return { promptKey: picked.key, answer: picked.answer };
+}
+function genSpasialBossRound() {
+  const gens = [genSpasialTampakRound, genAreaRound, genSpasialMatchRound, genSpasialRotateRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+function renderSpasialBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.kind === "shape_mc") return renderSpasialTampak(lvl);
+  if (r.mode === "shapecount") return renderAssemble(lvl);
+  if (r.svg !== undefined) return renderSvgMc(lvl);
+  return renderYesNo(lvl);
+}
+
+function gridPointSVG(px, py, gridSize) {
+  const cell = 22, pad = 18;
+  const size = gridSize * cell;
+  const color = shapeColor();
+  let lines = "";
+  for (let i = 0; i <= gridSize; i++) {
+    lines += `<line x1="${pad + i * cell}" y1="${pad}" x2="${pad + i * cell}" y2="${pad + size}" stroke="var(--ink)" stroke-width="1" opacity="0.35"/>`;
+    lines += `<line x1="${pad}" y1="${pad + i * cell}" x2="${pad + size}" y2="${pad + i * cell}" stroke="var(--ink)" stroke-width="1" opacity="0.35"/>`;
+  }
+  lines += `<line x1="${pad}" y1="${pad + size}" x2="${pad + size}" y2="${pad + size}" stroke="var(--ink)" stroke-width="2.5"/>`;
+  lines += `<line x1="${pad}" y1="${pad}" x2="${pad}" y2="${pad + size}" stroke="var(--ink)" stroke-width="2.5"/>`;
+  const cx = pad + px * cell, cy = pad + size - py * cell;
+  const dot = `<circle cx="${cx}" cy="${cy}" r="6" fill="${color}" stroke="var(--ink)" stroke-width="2"/>`;
+  const total = pad * 2 + size;
+  return `<svg viewBox="0 0 ${total} ${total}" width="120" height="120">${lines}${dot}</svg>`;
+}
+function genGridBacaRound() {
+  const gridSize = 4;
+  const col = randInt(0, gridSize - 1), row = randInt(0, gridSize - 1);
+  const colLetter = c => String.fromCharCode(65 + c);
+  const correct = `${colLetter(col)}${row + 1}`;
+  const rowAlt = (row + 2) % gridSize, colAlt = (col + 1) % gridSize;
+  const decoy1 = `${colLetter(col)}${rowAlt + 1}`;
+  const decoy2 = `${colLetter(colAlt)}${row + 1}`;
+  const options = shuffle([correct, decoy1, decoy2]);
+  return { svg: gridPointSVG(col + 0.5, row + 0.5, gridSize), options, correctIndex: options.indexOf(correct), promptKey: "gridBacaPrompt" };
+}
+function genGridKoordinatRound() {
+  const gridSize = 4;
+  const x = randInt(0, gridSize), y = randInt(0, gridSize);
+  const correct = `(${x}, ${y})`;
+  const xAlt = (x + 2) % (gridSize + 1), yAlt = (y + 1) % (gridSize + 1);
+  const decoy1 = `(${xAlt}, ${y})`, decoy2 = `(${x}, ${yAlt})`;
+  const options = shuffle([correct, decoy1, decoy2]);
+  return { svg: gridPointSVG(x, y, gridSize), options, correctIndex: options.indexOf(correct), promptKey: "gridKoordinatPrompt" };
+}
+function genGridLangkahRound() {
+  const gridSize = 4;
+  const x = randInt(1, gridSize);
+  let y = randInt(1, gridSize);
+  if (y === x) y = x === gridSize ? x - 1 : x + 1;
+  const correct = `${x} ke kanan, ${y} ke atas`;
+  const decoy1 = `${y} ke kanan, ${x} ke atas`;
+  const decoy2 = `${x + 1} ke kanan, ${y} ke atas`;
+  const options = shuffle([correct, decoy1, decoy2]);
+  return { svg: gridPointSVG(x, y, gridSize), options, correctIndex: options.indexOf(correct), promptKey: "gridLangkahPrompt" };
+}
+function genGridRuteRound() {
+  const gridSize = 6;
+  const x0 = randInt(0, 3), y0 = randInt(0, 3);
+  const goRight = Math.random() < 0.5;
+  const steps = randInt(1, 3);
+  const endX = goRight ? x0 + steps : x0, endY = goRight ? y0 : y0 + steps;
+  const correct = `(${endX}, ${endY})`;
+  const decoy1 = `(${x0}, ${y0})`;
+  const decoy2 = goRight ? `(${x0}, ${y0 + steps})` : `(${x0 + steps}, ${y0})`;
+  const options = shuffle([correct, decoy1, decoy2]);
+  return { svg: gridPointSVG(x0, y0, gridSize), options, correctIndex: options.indexOf(correct), promptKey: "gridRutePrompt", promptVars: { x: x0, y: y0, steps, dir: goRight ? "kanan" : "atas" } };
+}
+function genGridJarakRound() {
+  const gridSize = 6, horizontal = Math.random() < 0.5, fixed = randInt(0, gridSize);
+  const p1 = randInt(0, gridSize);
+  let p2 = randInt(0, gridSize);
+  if (p2 === p1) p2 = p1 === gridSize ? p1 - 1 : p1 + 1;
+  const correct = String(Math.abs(p1 - p2)).split("");
+  const exprText = horizontal ? `(${p1}, ${fixed}) ke (${p2}, ${fixed})` : `(${fixed}, ${p1}) ke (${fixed}, ${p2})`;
+  return { mode: "arithmetic", promptKey: "gridJarakPrompt", exprText, correct, decoys: digitDecoys(correct) };
+}
+function genGridTotalRound() {
+  const steps = randInt(2, 4);
+  const moves = Array.from({ length: steps }, () => randInt(1, 5));
+  const correct = String(moves.reduce((a, b) => a + b, 0)).split("");
+  return { mode: "arithmetic", promptKey: "gridTotalPrompt", exprText: moves.join(" + "), correct, decoys: digitDecoys(correct) };
+}
+function genGridMasalahRound() {
+  const places = [["Perpustakaan", "Kantin"], ["Sekolah", "Taman"], ["Pasar", "Rumah"]];
+  const [placeA, placeB] = places[randInt(0, places.length - 1)];
+  const gridSize = 6, fixed = randInt(0, gridSize);
+  const p1 = randInt(0, gridSize);
+  let p2 = randInt(0, gridSize);
+  if (p2 === p1) p2 = p1 === gridSize ? p1 - 1 : p1 + 1;
+  const correct = String(Math.abs(p1 - p2)).split("");
+  const text = `${placeA} di (${p1}, ${fixed}) dan ${placeB} di (${p2}, ${fixed}). Berapa jarak horizontalnya?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genGridBossRound() {
+  const gens = [genGridBacaRound, genGridKoordinatRound, genGridLangkahRound, genGridRuteRound, genGridJarakRound, genGridTotalRound, genGridMasalahRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+function renderGridBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.svg !== undefined) return renderSvgMc(lvl);
+  return renderAssemble(lvl);
+}
+
+/* ==========================================================================
+   KELAS 6 — Analisis Data & Peluang block: Peluang (Lessons 42-49).
+   ========================================================================== */
+const CERTAINTY_STATEMENTS = ["certSunrise", "certDieSeven", "certRain", "certCoinHead", "certMonthDays", "certFish"];
+const CERTAINTY_ANSWERS = { certSunrise: "pasti", certDieSeven: "tidakmungkin", certRain: "mungkin", certCoinHead: "mungkin", certMonthDays: "pasti", certFish: "tidakmungkin" };
+const CERTAINTY_TYPES = ["pasti", "mungkin", "tidakmungkin"];
+const CERTAINTY_LABEL_KEY = { pasti: "certaintyPasti", mungkin: "certaintyMungkin", tidakmungkin: "certaintyTidakMungkin" };
+const CERTAINTY_SCALE_LABEL_KEY = { pasti: "certaintyScale1", mungkin: "certaintyScaleMid", tidakmungkin: "certaintyScale0" };
+function renderPeluangKlasifikasi(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t(r.promptKey)));
+  const card = document.createElement("div");
+  card.className = "number-card crate-tag";
+  card.style.cssText = "font-size:16px; letter-spacing:normal; padding:12px 16px;";
+  card.textContent = t(r.statementKey);
+  panel.appendChild(card);
+  appendHotspotGrid(panel, lvl, r.optionTypes.map(ot => t(r.labelKeyMap[ot])), (idx, cell, stage) => checkMc(r, idx, cell, stage));
+  return panel;
+}
+function genPeluangKlasifikasiRound() {
+  const key = CERTAINTY_STATEMENTS[randInt(0, CERTAINTY_STATEMENTS.length - 1)];
+  const answer = CERTAINTY_ANSWERS[key];
+  const optionTypes = shuffle(CERTAINTY_TYPES.slice());
+  return { kind: "certainty_mc", statementKey: key, optionTypes, correctIndex: optionTypes.indexOf(answer), labelKeyMap: CERTAINTY_LABEL_KEY, promptKey: "peluangKlasifikasiPrompt" };
+}
+function genPeluangSkalaRound() {
+  const key = CERTAINTY_STATEMENTS[randInt(0, CERTAINTY_STATEMENTS.length - 1)];
+  const answer = CERTAINTY_ANSWERS[key];
+  const optionTypes = shuffle(CERTAINTY_TYPES.slice());
+  return { kind: "certainty_mc", statementKey: key, optionTypes, correctIndex: optionTypes.indexOf(answer), labelKeyMap: CERTAINTY_SCALE_LABEL_KEY, promptKey: "peluangSkalaPrompt" };
+}
+function genPeluangDaftarRound() {
+  const dadu = Math.random() < 0.5;
+  const validOptions = dadu ? ["1", "2", "3", "4", "5", "6"] : ["Angka", "Gambar"];
+  const invalidOptions = dadu ? ["7", "8"] : ["Sisi ketiga"];
+  const allOptions = shuffle([...validOptions, ...invalidOptions]);
+  const correctIndices = allOptions.map((v, i) => validOptions.includes(v) ? i : -1).filter(i => i !== -1);
+  return { mode: "multiselect", promptKey: dadu ? "peluangDaftarDaduPrompt" : "peluangDaftarKoinPrompt", options: allOptions, correctIndices };
+}
+function genPeluangPohonRound() {
+  const coinDie = Math.random() < 0.5;
+  const correct = String(coinDie ? 12 : 4).split("");
+  const storyText = t(coinDie ? "peluangPohonCoinDie" : "peluangPohonCoinCoin");
+  return { mode: "wordproblem", storyText, correct, decoys: digitDecoys(correct) };
+}
+function genPeluangKoinRound() {
+  const side = Math.random() < 0.5 ? "angka" : "gambar";
+  const text = `Sebuah koin dilempar sekali. Berapa peluang muncul sisi ${side}?`;
+  return { mode: "wordproblem", storyText: text, correct: ["1/2"], decoys: ["1/1", "2/1"] };
+}
+function genPeluangDaduRound() {
+  const type = randInt(0, 2);
+  let text, num, den;
+  if (type === 0) { const n = randInt(1, 6); text = `Sebuah dadu dilempar. Berapa peluang muncul mata ${n}?`; num = 1; den = 6; }
+  else if (type === 1) { text = `Sebuah dadu dilempar. Berapa peluang muncul mata genap?`; num = 3; den = 6; }
+  else { text = `Sebuah dadu dilempar. Berapa peluang muncul mata ganjil?`; num = 3; den = 6; }
+  const g = gcd(num, den) || 1;
+  const correctStr = `${num / g}/${den / g}`;
+  const decoySet = new Set([`${num}/${den}`, `${num / g + 1}/${den / g}`, `${den / g}/${num / g}`]);
+  decoySet.delete(correctStr);
+  const decoys = [...decoySet].slice(0, 2);
+  return { mode: "wordproblem", storyText: text, correct: [correctStr], decoys };
+}
+function genPeluangBandingRound() {
+  const dieCases = [{ num: 1, den: 6 }, { num: 3, den: 6 }, { num: 2, den: 6 }];
+  const die = dieCases[randInt(0, dieCases.length - 1)];
+  const coin = { num: 1, den: 2 };
+  const left = coin.num / coin.den, right = die.num / die.den;
+  const sign = left < right ? "<" : left > right ? ">" : "=";
+  const g1 = gcd(coin.num, coin.den) || 1, g2 = gcd(die.num, die.den) || 1;
+  return { aStr: `${coin.num / g1}/${coin.den / g1}`, bStr: `${die.num / g2}/${die.den / g2}`, sign };
+}
+function renderPeluangBanding(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-duel";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t("peluangBandingPrompt")));
+  const bgImage = DISTRICT_IMAGES[currentTopics()[state.topicIndex].id] || IMAGES.kotaAngka;
+  const { stage, slots } = buildHotspotStage(bgImage, 3);
+  const items = shuffle([
+    { label: r.aStr, correct: r.sign === ">" },
+    { label: r.bStr, correct: r.sign === "<" },
+    { label: "🔔", correct: r.sign === "=", bell: true },
+  ]);
+  items.forEach((item, idx) => {
+    const cell = document.createElement("div");
+    cell.className = "mc-opt hotspot-spot" + (item.bell ? " hotspot-bell" : "");
+    cell.style.left = slots[idx].x + "%";
+    cell.style.top = slots[idx].y + "%";
+    cell.textContent = item.label;
+    cell.onclick = () => checkHotspotCompare(item.correct, cell, stage);
+    stage.appendChild(cell);
+  });
+  panel.appendChild(stage);
+  return panel;
+}
+function genPeluangBossRound() {
+  const gens = [genPeluangKlasifikasiRound, genPeluangDaftarRound, genPeluangPohonRound, genPeluangSkalaRound, genPeluangKoinRound, genPeluangDaduRound, genPeluangBandingRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+function renderPeluangBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.kind === "certainty_mc") return renderPeluangKlasifikasi(lvl);
+  if (r.mode === "multiselect") return renderMultiSelect(lvl);
+  if (r.sign !== undefined) return renderPeluangBanding(lvl);
+  return renderAssemble(lvl);
+}
+
+/* ==========================================================================
    ANALISIS DATA GENERATORS — Lessons 58-60
    ========================================================================== */
 const DATA_ICONS = ["🍎", "🍊", "🍌", "🍇", "🍉"];
@@ -3410,6 +3871,32 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "waktudurasi") rounds.push(genWaktuDurasiRound());
     else if (lvl.type === "waktu24jam") rounds.push(genWaktu24JamRound());
     else if (lvl.type === "waktuboss") rounds.push(genWaktuBossRound());
+    else if (lvl.type === "kubusnet") rounds.push(genKubusNetRound());
+    else if (lvl.type === "kubussusun") rounds.push(genVolumeRound());
+    else if (lvl.type === "kubusgabungan") rounds.push(genKubusGabunganRound());
+    else if (lvl.type === "kubusciri") rounds.push(genKubusCiriRound());
+    else if (lvl.type === "kubusboss") rounds.push(genKubusBossRound());
+    else if (lvl.type === "spasialtampak") rounds.push(genSpasialTampakRound());
+    else if (lvl.type === "spasialtopcount") rounds.push(genAreaRound());
+    else if (lvl.type === "spasialmatch") rounds.push(genSpasialMatchRound());
+    else if (lvl.type === "spasialrotate") rounds.push(genSpasialRotateRound());
+    else if (lvl.type === "spasialboss") rounds.push(genSpasialBossRound());
+    else if (lvl.type === "gridbaca") rounds.push(genGridBacaRound());
+    else if (lvl.type === "gridkoordinat") rounds.push(genGridKoordinatRound());
+    else if (lvl.type === "gridlangkah") rounds.push(genGridLangkahRound());
+    else if (lvl.type === "gridrute") rounds.push(genGridRuteRound());
+    else if (lvl.type === "gridjarak") rounds.push(genGridJarakRound());
+    else if (lvl.type === "gridtotal") rounds.push(genGridTotalRound());
+    else if (lvl.type === "gridmasalah") rounds.push(genGridMasalahRound());
+    else if (lvl.type === "gridboss") rounds.push(genGridBossRound());
+    else if (lvl.type === "peluangklasifikasi") rounds.push(genPeluangKlasifikasiRound());
+    else if (lvl.type === "peluangdaftar") rounds.push(genPeluangDaftarRound());
+    else if (lvl.type === "peluangpohon") rounds.push(genPeluangPohonRound());
+    else if (lvl.type === "peluangskala") rounds.push(genPeluangSkalaRound());
+    else if (lvl.type === "peluangkoin") rounds.push(genPeluangKoinRound());
+    else if (lvl.type === "peluangdadu") rounds.push(genPeluangDaduRound());
+    else if (lvl.type === "peluangbanding") rounds.push(genPeluangBandingRound());
+    else if (lvl.type === "peluangboss") rounds.push(genPeluangBossRound());
     else if (lvl.type === "pictogram") rounds.push(genPictogramRound());
     else if (lvl.type === "barchart") rounds.push(genBarChartRound());
     else if (lvl.type === "databoss1") rounds.push(genDataBossRound());
@@ -3607,6 +4094,138 @@ const TOPICS_PENGUKURAN6 = [
   },
 ];
 
+const LEVELS_KUBUSBALOK6 = [
+  { id: 1, emoji: "📐", color: "l1", type: "kubusnet",
+    name: { id: "Jaring-jaring Kubus", en: "Cube Nets", ru: "Развёртки куба" },
+    desc: { id: "Menyusun dan memeriksa jaring-jaring", en: "Building and checking cube nets", ru: "Строим и проверяем развёртки" } },
+  { id: 2, emoji: "🧱", color: "l2", type: "kubussusun",
+    name: { id: "Menyusun Kubus Satuan", en: "Stacking Unit Cubes", ru: "Складываем кубики-единицы" },
+    desc: { id: "Hitung kubus satuan penyusunnya", en: "Count the unit cubes", ru: "Посчитай кубики-единицы" } },
+  { id: 3, emoji: "➕", color: "l3", type: "kubusgabungan",
+    name: { id: "Bangun Gabungan", en: "Combined Solids", ru: "Составные фигуры" },
+    desc: { id: "Jumlahkan dua bangun menjadi satu", en: "Add two solids together", ru: "Сложи две фигуры вместе" } },
+  { id: 4, emoji: "📋", color: "l5", type: "kubusciri",
+    name: { id: "Ciri-ciri Bangun Ruang", en: "Properties of Solids", ru: "Свойства объёмных фигур" },
+    desc: { id: "Sisi, rusuk, dan titik sudut", en: "Faces, edges, and vertices", ru: "Грани, рёбра и вершины" } },
+  { id: 5, emoji: "🕵️", color: "l4", type: "kubusboss",
+    name: { id: "Detektif Kubus & Balok", en: "Cube & Box Detective", ru: "Детектив кубов и брусков" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_SPASIAL6 = [
+  { id: 1, emoji: "👁️", color: "l1", type: "spasialtampak",
+    name: { id: "Tampak Depan, Atas, Samping", en: "Front, Top, Side Views", ru: "Вид спереди, сверху, сбоку" },
+    desc: { id: "Bentuk 2D dari bangun ruang", en: "The 2D shape of a 3D solid", ru: "2D-форма объёмной фигуры" } },
+  { id: 2, emoji: "🔢", color: "l2", type: "spasialtopcount",
+    name: { id: "Menghitung Tampak Atas", en: "Counting the Top View", ru: "Считаем вид сверху" },
+    desc: { id: "Berapa kotak terlihat dari atas?", en: "How many squares show from above?", ru: "Сколько клеток видно сверху?" } },
+  { id: 3, emoji: "🧩", color: "l3", type: "spasialmatch",
+    name: { id: "Mencocokkan Tampak", en: "Matching the View", ru: "Сопоставь вид" },
+    desc: { id: "Pilih ukuran yang sesuai", en: "Pick the matching size", ru: "Выбери подходящий размер" } },
+  { id: 4, emoji: "🔄", color: "l5", type: "spasialrotate",
+    name: { id: "Tantangan Rotasi", en: "Rotation Challenge", ru: "Задача на вращение" },
+    desc: { id: "Apakah jumlah kubusnya berubah?", en: "Does the cube count change?", ru: "Меняется ли количество кубиков?" } },
+  { id: 5, emoji: "🕵️", color: "l4", type: "spasialboss",
+    name: { id: "Detektif Visualisasi", en: "Visualization Detective", ru: "Детектив визуализации" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_GRID6 = [
+  { id: 1, emoji: "🔤", color: "l1", type: "gridbaca",
+    name: { id: "Membaca Lokasi", en: "Reading Locations", ru: "Чтение координат" },
+    desc: { id: "Format huruf-angka", en: "Letter-number format", ru: "Формат буква-цифра" } },
+  { id: 2, emoji: "📍", color: "l2", type: "gridkoordinat",
+    name: { id: "Menentukan Koordinat", en: "Finding Coordinates", ru: "Определение координат" },
+    desc: { id: "Format (x, y)", en: "(x, y) format", ru: "Формат (x, y)" } },
+  { id: 3, emoji: "✏️", color: "l3", type: "gridlangkah",
+    name: { id: "Menggambar Titik", en: "Drawing a Point", ru: "Рисуем точку" },
+    desc: { id: "Langkah dari titik awal", en: "Steps from the origin", ru: "Шаги от начала координат" } },
+  { id: 4, emoji: "🧭", color: "l5", type: "gridrute",
+    name: { id: "Mendeskripsikan Rute", en: "Describing a Route", ru: "Описание маршрута" },
+    desc: { id: "Posisi akhir setelah bergerak", en: "The final position after moving", ru: "Конечная позиция после движения" } },
+  { id: 5, emoji: "📏", color: "l6", type: "gridjarak",
+    name: { id: "Jarak Horizontal & Vertikal", en: "Horizontal & Vertical Distance", ru: "Горизонтальное и вертикальное расстояние" },
+    desc: { id: "Antara dua titik segaris", en: "Between two points in line", ru: "Между двумя точками на одной линии" } },
+  { id: 6, emoji: "➕", color: "l1", type: "gridtotal",
+    name: { id: "Rute Bertahap", en: "Multi-Step Routes", ru: "Маршрут по этапам" },
+    desc: { id: "Jarak total dari beberapa langkah", en: "Total distance across several steps", ru: "Общее расстояние за несколько шагов" } },
+  { id: 7, emoji: "🗺️", color: "l2", type: "gridmasalah",
+    name: { id: "Masalah Peta & Grid", en: "Map & Grid Problems", ru: "Задачи на карту и сетку" },
+    desc: { id: "Terapkan pada peta kerajaan", en: "Apply it to a kingdom map", ru: "Применяем к карте королевства" } },
+  { id: 8, emoji: "🕵️", color: "l4", type: "gridboss",
+    name: { id: "Detektif Grid", en: "Grid Detective", ru: "Детектив сетки" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const TOPICS_GEOMETRI6 = [
+  {
+    id: "kubusbalok6", emoji: "📦", levels: LEVELS_KUBUSBALOK6,
+    name: { id: "Bengkel Kubus & Balok", en: "Cube & Box Workshop", ru: "Мастерская кубов и брусков" },
+    subtitle: { id: "Konstruksi dan Urai (5 pelajaran)", en: "Construction and Decomposition (5 lessons)", ru: "Строение и разбор (5 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 5 pelajaran topik \"Kubus dan Balok: Konstruksi dan Urai\" (Kelas 6, Router Matematika, G6-L26 s/d G6-L30).",
+      en: "This game generates unlimited new questions for all 5 lessons of the \"Cubes and Boxes: Construction and Decomposition\" topic (Grade 6 Math Router, G6-L26 to G6-L30).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 5 уроков темы «Кубы и бруски: строение и разбор» (Класс 6, роутер математики, G6-L26 — G6-L30).",
+    },
+  },
+  {
+    id: "spasial6", emoji: "👁️", levels: LEVELS_SPASIAL6,
+    name: { id: "Menara Visualisasi", en: "Visualization Tower", ru: "Башня визуализации" },
+    subtitle: { id: "Visualisasi Spasial (4 pelajaran)", en: "Spatial Visualization (4 lessons)", ru: "Пространственное воображение (4 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 4 pelajaran topik \"Visualisasi Spasial\" (Kelas 6, Router Matematika, G6-L31 s/d G6-L34).",
+      en: "This game generates unlimited new questions for all 4 lessons of the \"Spatial Visualization\" topic (Grade 6 Math Router, G6-L31 to G6-L34).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 4 уроков темы «Пространственное воображение» (Класс 6, роутер математики, G6-L31 — G6-L34).",
+    },
+  },
+  {
+    id: "grid6", emoji: "🗺️", levels: LEVELS_GRID6,
+    name: { id: "Peta Berpetak Kerajaan", en: "Kingdom Grid Map", ru: "Клетчатая карта королевства" },
+    subtitle: { id: "Sistem Berpetak dan Lokasi (7 pelajaran)", en: "Grid System and Location (7 lessons)", ru: "Система координат и расположение (7 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 7 pelajaran topik \"Sistem Berpetak dan Lokasi\" (Kelas 6, Router Matematika, G6-L35 s/d G6-L41).",
+      en: "This game generates unlimited new questions for all 7 lessons of the \"Grid System and Location\" topic (Grade 6 Math Router, G6-L35 to G6-L41).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 7 уроков темы «Система координат и расположение» (Класс 6, роутер математики, G6-L35 — G6-L41).",
+    },
+  },
+];
+
+const LEVELS_PELUANG6 = [
+  { id: 1, emoji: "🎲", color: "l1", type: "peluangklasifikasi",
+    name: { id: "Pasti, Mungkin, Tidak Mungkin", en: "Certain, Possible, Impossible", ru: "Достоверно, возможно, невозможно" },
+    desc: { id: "Klasifikasikan pernyataan", en: "Classify the statement", ru: "Классифицируй утверждение" } },
+  { id: 2, emoji: "📝", color: "l2", type: "peluangdaftar",
+    name: { id: "Mendaftar Hasil", en: "Listing Outcomes", ru: "Перечисление исходов" },
+    desc: { id: "Semua hasil yang mungkin", en: "All the possible outcomes", ru: "Все возможные исходы" } },
+  { id: 3, emoji: "🌳", color: "l3", type: "peluangpohon",
+    name: { id: "Diagram Pohon", en: "Tree Diagrams", ru: "Дерево вероятностей" },
+    desc: { id: "Hitung total kemungkinan", en: "Count the total possibilities", ru: "Посчитай все варианты" } },
+  { id: 4, emoji: "📊", color: "l5", type: "peluangskala",
+    name: { id: "Skala Peluang", en: "Probability Scale", ru: "Шкала вероятности" },
+    desc: { id: "Antara 0 dan 1", en: "Between 0 and 1", ru: "Между 0 и 1" } },
+  { id: 5, emoji: "🪙", color: "l6", type: "peluangkoin",
+    name: { id: "Peluang pada Koin", en: "Coin Probability", ru: "Вероятность на монете" },
+    desc: { id: "Percobaan pelemparan koin", en: "The coin-toss experiment", ru: "Эксперимент с подбрасыванием монеты" } },
+  { id: 6, emoji: "🎯", color: "l1", type: "peluangdadu",
+    name: { id: "Peluang pada Dadu", en: "Dice Probability", ru: "Вероятность на кубике" },
+    desc: { id: "Percobaan pelemparan dadu", en: "The dice-roll experiment", ru: "Эксперимент с игральным кубиком" } },
+  { id: 7, emoji: "⚖️", color: "l2", type: "peluangbanding",
+    name: { id: "Membandingkan Peluang", en: "Comparing Probabilities", ru: "Сравнение вероятностей" },
+    desc: { id: "Mana yang lebih mungkin?", en: "Which is more likely?", ru: "Что более вероятно?" } },
+  { id: 8, emoji: "🕵️", color: "l4", type: "peluangboss",
+    name: { id: "Detektif Peluang", en: "Probability Detective", ru: "Детектив вероятности" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const TOPICS_PELUANG6 = [
+  {
+    id: "peluang6", emoji: "🎲", levels: LEVELS_PELUANG6,
+    name: { id: "Kasino Kerajaan Peluang", en: "Kingdom of Chance", ru: "Королевство вероятности" },
+    subtitle: { id: "Peluang (8 pelajaran)", en: "Probability (8 lessons)", ru: "Вероятность (8 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 8 pelajaran topik \"Peluang\" (Kelas 6, Router Matematika, G6-L42 s/d G6-L49).",
+      en: "This game generates unlimited new questions for all 8 lessons of the \"Probability\" topic (Grade 6 Math Router, G6-L42 to G6-L49).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 8 уроков темы «Вероятность» (Класс 6, роутер математики, G6-L42 — G6-L49).",
+    },
+  },
+];
+
 const BLOCKS = [
   {
     id: "bilangan6", emoji: "🔢", topics: TOPICS_BILANGAN6,
@@ -3625,6 +4244,18 @@ const BLOCKS = [
     name: { id: "Pengukuran", en: "Measurement", ru: "Измерение" },
     desc: { id: "1 distrik · 4 stasiun", en: "1 district · 4 stations", ru: "1 район · 4 станции" },
     story: { key: "durasiStoryK6" },
+  },
+  {
+    id: "geometri6", emoji: "📦", topics: TOPICS_GEOMETRI6,
+    name: { id: "Geometri", en: "Geometry", ru: "Геометрия" },
+    desc: { id: "3 distrik · 18 stasiun", en: "3 districts · 18 stations", ru: "3 района · 18 станций" },
+    story: { key: "geometriStoryK6" },
+  },
+  {
+    id: "peluang6", emoji: "🎲", topics: TOPICS_PELUANG6,
+    name: { id: "Analisis Data & Peluang", en: "Data Analysis & Probability", ru: "Анализ данных и вероятность" },
+    desc: { id: "1 distrik · 8 stasiun", en: "1 district · 8 stations", ru: "1 район · 8 станций" },
+    story: { key: "peluangStoryK6" },
   },
 ];
 
@@ -3688,6 +4319,10 @@ const CHARACTER_BY_TYPE = {
   ratiotable: "nina", ratiounit: "nina", ratiocompare: "kumar", ratioproportion: "robi",
   ratioword: "nina", ratioboss: "baron",
   waktukonversi: "robi", waktudurasi: "robi", waktu24jam: "dara", waktuboss: "baron",
+  kubusnet: "dara", kubussusun: "dara", kubusgabungan: "kumar", kubusciri: "nina", kubusboss: "baron",
+  spasialtampak: "dara", spasialtopcount: "dara", spasialmatch: "kumar", spasialrotate: "robi", spasialboss: "baron",
+  gridbaca: "kumar", gridkoordinat: "kumar", gridlangkah: "dara", gridrute: "robi", gridjarak: "robi", gridtotal: "robi", gridmasalah: "nina", gridboss: "baron",
+  peluangklasifikasi: "nina", peluangdaftar: "nina", peluangpohon: "dara", peluangskala: "nina", peluangkoin: "robi", peluangdadu: "robi", peluangbanding: "kumar", peluangboss: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -3726,6 +4361,10 @@ const DISTRICT_IMAGES = {
   desimal6: IMAGES.kotaAngka,
   rasio6: IMAGES.alunAlunPersen,
   durasi6: IMAGES.nightObservatory,
+  kubusbalok6: IMAGES.inventorsWorkshop,
+  spasial6: IMAGES.gardenMaze,
+  grid6: IMAGES.monorailJourney,
+  peluang6: IMAGES.lanternFestival,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
@@ -3737,8 +4376,10 @@ const BLOCK_IMAGES = {
   bilangan6: IMAGES.kingdom,
   aljabar6: IMAGES.alunAlunPersen,
   pengukuran6: IMAGES.nightObservatory,
+  geometri6: IMAGES.inventorsWorkshop,
+  peluang6: IMAGES.lanternFestival,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss", "sudutboss", "kelilingboss", "luasboss5", "fracopboss6", "decboss6", "ratioboss", "waktuboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss", "sudutboss", "kelilingboss", "luasboss5", "fracopboss6", "decboss6", "ratioboss", "waktuboss", "kubusboss", "spasialboss", "gridboss", "peluangboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -4113,6 +4754,24 @@ function renderLevel() {
   else if (lvl.type === "ratiocompare") container.appendChild(renderRatioCompare(lvl));
   else if (lvl.type === "ratioboss") container.appendChild(renderRatioBoss(lvl));
   else if (["waktukonversi", "waktudurasi", "waktu24jam", "waktuboss"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "kubusnet") container.appendChild(renderKubusNet(lvl));
+  else if (lvl.type === "kubussusun") container.appendChild(renderAssemble(lvl));
+  else if (["kubusgabungan"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "kubusciri") container.appendChild(renderTable(lvl));
+  else if (lvl.type === "kubusboss") container.appendChild(renderKubusBoss(lvl));
+  else if (lvl.type === "spasialtampak") container.appendChild(renderSpasialTampak(lvl));
+  else if (lvl.type === "spasialtopcount") container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "spasialmatch") container.appendChild(renderSvgMc(lvl));
+  else if (lvl.type === "spasialrotate") container.appendChild(renderYesNo(lvl));
+  else if (lvl.type === "spasialboss") container.appendChild(renderSpasialBoss(lvl));
+  else if (["gridbaca", "gridkoordinat", "gridlangkah", "gridrute"].includes(lvl.type)) container.appendChild(renderSvgMc(lvl));
+  else if (["gridjarak", "gridtotal", "gridmasalah"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "gridboss") container.appendChild(renderGridBoss(lvl));
+  else if (["peluangklasifikasi", "peluangskala"].includes(lvl.type)) container.appendChild(renderPeluangKlasifikasi(lvl));
+  else if (lvl.type === "peluangdaftar") container.appendChild(renderMultiSelect(lvl));
+  else if (["peluangpohon", "peluangkoin", "peluangdadu"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "peluangbanding") container.appendChild(renderPeluangBanding(lvl));
+  else if (lvl.type === "peluangboss") container.appendChild(renderPeluangBoss(lvl));
   else if (lvl.type === "areacompare" || lvl.type === "datacompare") container.appendChild(renderAreaCompare(lvl));
   else if (["pictogram", "barchart", "databoss1", "databoss2"].includes(lvl.type)) container.appendChild(renderDataChart(lvl));
   else if (lvl.type === "match" || lvl.type === "primematch") container.appendChild(renderMatch(lvl));
