@@ -1269,7 +1269,10 @@ function pieSVG(n, k, opts) {
   opts = opts || {};
   const size = opts.size || 64;
   const fill = opts.fill || "var(--l1)";
-  const empty = opts.empty || "#FFFDF6";
+  /* Empty slices used to match --paper exactly, so they vanished against
+     paper-colored cards — only their thin outline was visible. A light,
+     clearly-visible neutral makes "this part is NOT counted" unambiguous. */
+  const empty = opts.empty || "#DCD5E8";
   const cx = size / 2, cy = size / 2, r = size / 2 - 3;
   let paths = "";
   for (let i = 0; i < n; i++) {
@@ -1280,7 +1283,7 @@ function pieSVG(n, k, opts) {
     const color = i < k ? fill : empty;
     paths += `<path d="M ${cx} ${cy} L ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z" fill="${color}" stroke="var(--ink)" stroke-width="2"/>`;
   }
-  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle cx="${cx}" cy="${cy}" r="${r + 1.5}" fill="none" stroke="var(--ink)" stroke-width="3"/>${paths}</svg>`;
 }
 function fracChip(f, color) {
   const wrap = document.createElement("div");
@@ -1301,7 +1304,7 @@ function gridSVG(cols, rows, shaded, opts) {
   const gap = 1;
   const w = cols * (cell + gap) - gap, h = rows * (cell + gap) - gap;
   const fill = opts.fill || "var(--l1)";
-  const empty = opts.empty || "#FFFDF6";
+  const empty = opts.empty || "#DCD5E8";
   let rects = "";
   const total = cols * rows;
   for (let i = 0; i < total; i++) {
