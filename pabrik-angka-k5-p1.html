@@ -604,6 +604,10 @@ const UI = {
     shapeSquare: "Persegi", shapeRectangle: "Persegi Panjang", shapeParallelogram: "Jajar Genjang", shapeTrapezoid: "Trapesium", shapeRhombus: "Belah Ketupat",
     shapeTriangleN: "Segitiga", shapeQuadN: "Segiempat", shapePentagon: "Segilima", shapeHexagon: "Segienam",
     geometriStory: "🔷 <b>Kebun Bentuk</b>: <b>Baron Nol</b> mengacaukan nama-nama bangun dan menyembunyikan potongannya! Bantu Koki Nina &amp; Arsitek Dara merapikan setiap distrik.",
+    triangleSidesPrompt: "Pilih SEMUA kombinasi sisi yang bisa membentuk segitiga!",
+    triangleAnglePrompt: "Sudut apa yang dimiliki segitiga ini?",
+    shapeAcuteAngle: "Lancip", shapeRightAngle: "Siku-siku", shapeObtuseAngle: "Tumpul",
+    triangleSumPrompt: "Berapa besar sudut ketiga segitiga ini?",
     areaPrompt: "Berapa luas bangun ini (dalam petak satuan)?",
     areaComparePrompt: "Bangun mana yang lebih luas? Ketuk tanda yang benar!",
     volumePrompt: "Berapa banyak kubus satuan yang menyusun tumpukan ini?",
@@ -722,6 +726,10 @@ const UI = {
     shapeSquare: "Square", shapeRectangle: "Rectangle", shapeParallelogram: "Parallelogram", shapeTrapezoid: "Trapezoid", shapeRhombus: "Rhombus",
     shapeTriangleN: "Triangle", shapeQuadN: "Quadrilateral", shapePentagon: "Pentagon", shapeHexagon: "Hexagon",
     geometriStory: "🔷 <b>Shape Garden</b>: <b>Baron Zero</b> is scrambling shape names and hiding their pieces! Help Baker Nina &amp; Architect Dara tidy up every district.",
+    triangleSidesPrompt: "Select ALL side combinations that can form a triangle!",
+    triangleAnglePrompt: "What kind of angle does this triangle have?",
+    shapeAcuteAngle: "Acute", shapeRightAngle: "Right", shapeObtuseAngle: "Obtuse",
+    triangleSumPrompt: "What is the measure of this triangle's third angle?",
     areaPrompt: "What is the area of this shape (in unit squares)?",
     areaComparePrompt: "Which shape has more area? Tap the correct sign!",
     volumePrompt: "How many unit cubes make up this stack?",
@@ -840,6 +848,10 @@ const UI = {
     shapeSquare: "Квадрат", shapeRectangle: "Прямоугольник", shapeParallelogram: "Параллелограмм", shapeTrapezoid: "Трапеция", shapeRhombus: "Ромб",
     shapeTriangleN: "Треугольник", shapeQuadN: "Четырёхугольник", shapePentagon: "Пятиугольник", shapeHexagon: "Шестиугольник",
     geometriStory: "🔷 <b>Сад фигур</b>: <b>Барон Ноль</b> путает названия фигур и прячет их части! Помоги Пекарю Нине и Архитектору Даре навести порядок в каждом районе.",
+    triangleSidesPrompt: "Выбери ВСЕ комбинации сторон, из которых можно составить треугольник!",
+    triangleAnglePrompt: "Какой угол у этого треугольника?",
+    shapeAcuteAngle: "Остроугольный", shapeRightAngle: "Прямоугольный", shapeObtuseAngle: "Тупоугольный",
+    triangleSumPrompt: "Чему равен третий угол этого треугольника?",
     areaPrompt: "Какова площадь этой фигуры (в клетках)?",
     areaComparePrompt: "У какой фигуры площадь больше? Нажми на правильный знак!",
     volumePrompt: "Сколько кубиков в этой стопке?",
@@ -2458,6 +2470,8 @@ function triangleSVG(type) {
     isosceles: "100,15 65,140 135,140",
     scalene: "60,25 30,145 170,110",
     right: "30,30 30,140 170,140",
+    acute: "100,20 40,140 160,140",
+    obtuse: "10,150 190,150 150,100",
   };
   return `<svg viewBox="0 0 200 160" width="140" height="112"><polygon points="${presets[type]}" fill="${shapeColor()}" stroke="var(--ink)" stroke-width="4" stroke-linejoin="round"/></svg>`;
 }
@@ -2507,6 +2521,51 @@ function genPolygonRound() {
 function genShapeBossRound() {
   const gens = [genTriangleRound, genQuadRound, genPolygonRound];
   return gens[randInt(0, gens.length - 1)]();
+}
+
+/* ==========================================================================
+   KELAS 5 — Geometri topic (Lessons 48-53): triangle side/angle properties
+   and quadrilateral review, on top of the k4 shape-classification engine.
+   ========================================================================== */
+function genTriangleSides3Round() {
+  const n = 4;
+  const validCount = randInt(1, 3);
+  const flags = shuffle([...Array(n)].map((_, i) => i < validCount));
+  const options = [];
+  const correctIndices = [];
+  flags.forEach((isValid, i) => {
+    const a = randInt(2, 10), b = randInt(2, 10);
+    const c = isValid ? randInt(Math.abs(a - b) + 1, a + b - 1) : a + b + randInt(0, 5);
+    options.push([a, b, c].sort((x, y) => x - y).join(" , "));
+    if (isValid) correctIndices.push(i);
+  });
+  return { mode: "multiselect", promptKey: "triangleSidesPrompt", options, correctIndices };
+}
+
+const ANGLE_TYPES = ["acute", "right", "obtuse"];
+const ANGLE_LABEL_KEY = { acute: "shapeAcuteAngle", right: "shapeRightAngle", obtuse: "shapeObtuseAngle" };
+function genTriangleAngleRound() {
+  const correct = ANGLE_TYPES[randInt(0, ANGLE_TYPES.length - 1)];
+  const optionTypes = shuffle(ANGLE_TYPES.slice());
+  return { kind: "shape_mc", svg: triangleSVG(correct), optionTypes, correctIndex: optionTypes.indexOf(correct), labelKeyMap: ANGLE_LABEL_KEY, promptKey: "triangleAnglePrompt" };
+}
+
+function genTriangleSumRound() {
+  const a = randInt(20, 90), b = randInt(20, 160 - a);
+  const third = 180 - a - b;
+  const correct = String(third).split("");
+  return { mode: "arithmetic", promptKey: "triangleSumPrompt", exprText: `180° − ${a}° − ${b}°`, correct, decoys: digitDecoys(correct) };
+}
+
+function genGeometriBossRound() {
+  const gens = [genTriangleSides3Round, genTriangleAngleRound, genTriangleSumRound, genTriangleRound, genQuadRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+function renderGeometriBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.mode === "multiselect") return renderMultiSelect(lvl);
+  if (r.kind === "shape_mc") return renderShapeMc(lvl);
+  return renderAssemble(lvl);
 }
 
 function gridSplitSVG(n) {
@@ -2732,6 +2791,10 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "triangleprop") rounds.push(genTriangleRound());
     else if (lvl.type === "quadprop") rounds.push(genQuadRound());
     else if (lvl.type === "shapeboss") rounds.push(genShapeBossRound());
+    else if (lvl.type === "trianglesides3") rounds.push(genTriangleSides3Round());
+    else if (lvl.type === "triangleangletype") rounds.push(genTriangleAngleRound());
+    else if (lvl.type === "trianglesum") rounds.push(genTriangleSumRound());
+    else if (lvl.type === "geoboss") rounds.push(genGeometriBossRound());
     else if (lvl.type === "compose") rounds.push(genComposeRound());
     else if (lvl.type === "decompose") rounds.push(genDecomposeRound());
     else if (lvl.type === "spatialboss") rounds.push(genSpatialBossRound());
@@ -3118,6 +3181,39 @@ const TOPICS_DATA5 = [
   },
 ];
 
+const LEVELS_GEOMETRI5 = [
+  { id: 1, emoji: "📏", color: "l1", type: "trianglesides3",
+    name: { id: "Sisi Segitiga", en: "Triangle Sides", ru: "Стороны треугольника" },
+    desc: { id: "Sisi mana yang bisa membentuk segitiga?", en: "Which sides can form a triangle?", ru: "Какие стороны образуют треугольник?" } },
+  { id: 2, emoji: "📐", color: "l2", type: "triangleangletype",
+    name: { id: "Jenis Sudut Segitiga", en: "Triangle Angle Types", ru: "Виды углов треугольника" },
+    desc: { id: "Lancip, siku-siku, atau tumpul?", en: "Acute, right, or obtuse?", ru: "Острый, прямой или тупой?" } },
+  { id: 3, emoji: "➗", color: "l3", type: "trianglesum",
+    name: { id: "Jumlah Sudut Segitiga", en: "Sum of Triangle Angles", ru: "Сумма углов треугольника" },
+    desc: { id: "Jumlah sudut segitiga selalu 180°", en: "A triangle's angles always sum to 180°", ru: "Сумма углов треугольника всегда 180°" } },
+  { id: 4, emoji: "🔺", color: "l5", type: "triangleprop",
+    name: { id: "Jenis Segitiga", en: "Types of Triangles", ru: "Виды треугольников" },
+    desc: { id: "Berdasarkan panjang sisinya", en: "Classified by their side lengths", ru: "По длине сторон" } },
+  { id: 5, emoji: "🟦", color: "l6", type: "quadprop",
+    name: { id: "Jenis Segi Empat", en: "Types of Quadrilaterals", ru: "Виды четырёхугольников" },
+    desc: { id: "Persegi, jajar genjang, dan lainnya", en: "Squares, parallelograms, and more", ru: "Квадраты, параллелограммы и другие" } },
+  { id: 6, emoji: "🕵️", color: "l4", type: "geoboss",
+    name: { id: "Detektif Geometri", en: "Geometry Detective", ru: "Детектив геометрии" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const TOPICS_GEOMETRI5 = [
+  {
+    id: "geometri5", emoji: "🔷", levels: LEVELS_GEOMETRI5,
+    name: { id: "Kebun Segi Banyak", en: "Polygon Garden", ru: "Сад многоугольников" },
+    subtitle: { id: "Ciri-ciri Bangun Datar (6 pelajaran)", en: "Properties of Flat Shapes (6 lessons)", ru: "Свойства плоских фигур (6 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 6 pelajaran topik \"Ciri-ciri Bangun Datar\" (Kelas 5, Router Matematika, G5-L48 s/d G5-L53).",
+      en: "This game generates unlimited new questions for all 6 lessons of the \"Properties of Flat Shapes\" topic (Grade 5 Math Router, G5-L48 to G5-L53).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 6 уроков темы «Свойства плоских фигур» (Класс 5, роутер математики, G5-L48 — G5-L53).",
+    },
+  },
+];
+
 const BLOCKS = [
   {
     id: "bilangan", emoji: "🔢", topics: TOPICS_BILANGAN5,
@@ -3142,6 +3238,12 @@ const BLOCKS = [
     name: { id: "Analisis Data", en: "Data Analysis", ru: "Анализ данных" },
     desc: { id: "3 distrik · 7 stasiun", en: "3 districts · 7 stations", ru: "3 района · 7 станций" },
     story: { key: "dataStoryK5" },
+  },
+  {
+    id: "geometri5", emoji: "🔷", topics: TOPICS_GEOMETRI5,
+    name: { id: "Geometri", en: "Geometry", ru: "Геометрия" },
+    desc: { id: "1 distrik · 6 stasiun", en: "1 district · 6 stations", ru: "1 район · 6 станций" },
+    story: { key: "geometriStory" },
   },
 ];
 
@@ -3178,6 +3280,7 @@ const CHARACTER_BY_TYPE = {
   unknownadd: "robi", unknownsub: "robi", unknownboss: "baron",
   patterngrow: "dara", patternshrink: "dara", patternboss: "baron",
   triangleprop: "nina", quadprop: "nina", shapeboss: "baron",
+  trianglesides3: "dara", triangleangletype: "dara", trianglesum: "robi", geoboss: "baron",
   compose: "dara", decompose: "dara", spatialboss: "baron",
   area: "dara", areacompare: "kumar", volume: "dara", luasboss: "baron",
   lengthconv: "kumar", weightconv: "kumar", measureboss: "baron",
@@ -3224,14 +3327,16 @@ const DISTRICT_IMAGES = {
   pengumpulan5: IMAGES.alunAlunPersen,
   penyajian5: IMAGES.royalLibrary,
   interpretasi5: IMAGES.heroesFinale,
+  geometri5: IMAGES.gardenMaze,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
   operasi5: IMAGES.kingdom,
   aljabar5: IMAGES.nightObservatory,
   data5: IMAGES.royalLibrary,
+  geometri5: IMAGES.gardenMaze,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -3584,7 +3689,10 @@ function renderLevel() {
   else if (lvl.type === "factfamily") container.appendChild(renderFactFamily(lvl));
   else if (lvl.type === "factorcheck" || lvl.type === "multiplecheck") container.appendChild(renderYesNo(lvl));
   else if (["opboss", "mdboss", "fkboss", "pmboss"].includes(lvl.type)) container.appendChild(renderMixed(lvl));
-  else if (["triangleprop", "quadprop", "shapeboss"].includes(lvl.type)) container.appendChild(renderShapeMc(lvl));
+  else if (["triangleprop", "quadprop", "shapeboss", "triangleangletype"].includes(lvl.type)) container.appendChild(renderShapeMc(lvl));
+  else if (lvl.type === "trianglesides3") container.appendChild(renderMultiSelect(lvl));
+  else if (lvl.type === "trianglesum") container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "geoboss") container.appendChild(renderGeometriBoss(lvl));
   else if (lvl.type === "areacompare" || lvl.type === "datacompare") container.appendChild(renderAreaCompare(lvl));
   else if (["pictogram", "barchart", "databoss1", "databoss2"].includes(lvl.type)) container.appendChild(renderDataChart(lvl));
   else if (lvl.type === "match" || lvl.type === "primematch") container.appendChild(renderMatch(lvl));
@@ -5298,7 +5406,7 @@ function renderShapeMc(lvl) {
   meta.className = "round-meta";
   meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
   panel.appendChild(meta);
-  panel.appendChild(robotRow(t("shapeMcPrompt")));
+  panel.appendChild(robotRow(t(r.promptKey || "shapeMcPrompt")));
   const { stage, slots } = buildHotspotStage(bgImageFor(lvl), r.optionTypes.length);
   const shapeWrap = document.createElement("div");
   shapeWrap.style.cssText = "position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2; filter:drop-shadow(2px 2px 0 var(--shadow-col)); max-width:80px;";
