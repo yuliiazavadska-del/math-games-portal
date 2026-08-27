@@ -608,6 +608,10 @@ const UI = {
     triangleAnglePrompt: "Sudut apa yang dimiliki segitiga ini?",
     shapeAcuteAngle: "Lancip", shapeRightAngle: "Siku-siku", shapeObtuseAngle: "Tumpul",
     triangleSumPrompt: "Berapa besar sudut ketiga segitiga ini?",
+    sudutKlasifikasiPrompt: "Sudut apakah ini?",
+    sudutEstimasiPrompt: "Sudut {deg}° termasuk sudut apa?",
+    sudutPasanganPrompt: "Berapa besar sudut pasangannya?",
+    sudutGarisPrompt: "Berapa besar sudut yang tersisa?",
     areaPrompt: "Berapa luas bangun ini (dalam petak satuan)?",
     areaComparePrompt: "Bangun mana yang lebih luas? Ketuk tanda yang benar!",
     volumePrompt: "Berapa banyak kubus satuan yang menyusun tumpukan ini?",
@@ -730,6 +734,10 @@ const UI = {
     triangleAnglePrompt: "What kind of angle does this triangle have?",
     shapeAcuteAngle: "Acute", shapeRightAngle: "Right", shapeObtuseAngle: "Obtuse",
     triangleSumPrompt: "What is the measure of this triangle's third angle?",
+    sudutKlasifikasiPrompt: "What kind of angle is this?",
+    sudutEstimasiPrompt: "A {deg}° angle is what kind of angle?",
+    sudutPasanganPrompt: "What is the measure of the paired angle?",
+    sudutGarisPrompt: "What is the measure of the remaining angle?",
     areaPrompt: "What is the area of this shape (in unit squares)?",
     areaComparePrompt: "Which shape has more area? Tap the correct sign!",
     volumePrompt: "How many unit cubes make up this stack?",
@@ -852,6 +860,10 @@ const UI = {
     triangleAnglePrompt: "Какой угол у этого треугольника?",
     shapeAcuteAngle: "Остроугольный", shapeRightAngle: "Прямоугольный", shapeObtuseAngle: "Тупоугольный",
     triangleSumPrompt: "Чему равен третий угол этого треугольника?",
+    sudutKlasifikasiPrompt: "Какой это угол?",
+    sudutEstimasiPrompt: "Угол {deg}° — это какой угол?",
+    sudutPasanganPrompt: "Чему равен парный угол?",
+    sudutGarisPrompt: "Чему равен оставшийся угол?",
     areaPrompt: "Какова площадь этой фигуры (в клетках)?",
     areaComparePrompt: "У какой фигуры площадь больше? Нажми на правильный знак!",
     volumePrompt: "Сколько кубиков в этой стопке?",
@@ -2673,6 +2685,136 @@ function genMeasureBossRound() {
 }
 
 /* ==========================================================================
+   KELAS 5 — Pengukuran block (Lessons 54-70): Sudut, Keliling, Luas.
+   Word-problem storyText below is baked in Indonesian only, matching the
+   existing genMixedWordRound precedent elsewhere in this file.
+   ========================================================================== */
+function angleSVG(deg) {
+  const cx = 100, cy = 150, len = 90, rad = deg * Math.PI / 180;
+  const x2 = cx + len * Math.cos(rad), y2 = cy - len * Math.sin(rad);
+  const arcR = 26, arcEndX = cx + arcR * Math.cos(rad), arcEndY = cy - arcR * Math.sin(rad);
+  return `<svg viewBox="0 0 200 160" width="140" height="112">
+    <line x1="${cx}" y1="${cy}" x2="${cx + len}" y2="${cy}" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="${cx}" y1="${cy}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M ${cx + arcR} ${cy} A ${arcR} ${arcR} 0 0 0 ${arcEndX.toFixed(1)} ${arcEndY.toFixed(1)}" fill="none" stroke="${shapeColor()}" stroke-width="4"/>
+  </svg>`;
+}
+function genSudutKlasifikasiRound() {
+  const correct = ANGLE_TYPES[randInt(0, ANGLE_TYPES.length - 1)];
+  const deg = correct === "acute" ? randInt(25, 80) : correct === "right" ? 90 : randInt(100, 155);
+  const optionTypes = shuffle(ANGLE_TYPES.slice());
+  return { kind: "shape_mc", svg: angleSVG(deg), optionTypes, correctIndex: optionTypes.indexOf(correct), labelKeyMap: ANGLE_LABEL_KEY, promptKey: "sudutKlasifikasiPrompt" };
+}
+function genSudutEstimasiRound() {
+  const correct = ANGLE_TYPES[randInt(0, ANGLE_TYPES.length - 1)];
+  const deg = correct === "acute" ? randInt(10, 85) : correct === "right" ? 90 : randInt(95, 175);
+  const order = shuffle(ANGLE_TYPES.map((_, i) => i));
+  return { kind: "sudut_estimasi", deg, order, correctIndex: order.indexOf(ANGLE_TYPES.indexOf(correct)) };
+}
+function renderSudutEstimasi(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t("sudutEstimasiPrompt", { deg: r.deg })));
+  appendHotspotGrid(panel, lvl, r.order.map(i => t(ANGLE_LABEL_KEY[ANGLE_TYPES[i]])), (idx, cell, stage) => checkMc(r, idx, cell, stage));
+  return panel;
+}
+function genSudutPasanganRound() {
+  const useComplement = Math.random() < 0.5;
+  const total = useComplement ? 90 : 180;
+  const a = useComplement ? randInt(10, 80) : randInt(20, 160);
+  const correct = String(total - a).split("");
+  return { mode: "arithmetic", promptKey: "sudutPasanganPrompt", exprText: `${total}° − ${a}°`, correct, decoys: digitDecoys(correct) };
+}
+function genSudutGarisRound() {
+  const total = Math.random() < 0.5 ? 180 : 360;
+  const a = randInt(20, Math.floor(total * 0.4));
+  const b = randInt(20, total - a - 20);
+  const correct = String(total - a - b).split("");
+  return { mode: "arithmetic", promptKey: "sudutGarisPrompt", exprText: `${total}° − ${a}° − ${b}°`, correct, decoys: digitDecoys(correct) };
+}
+function genSudutBossRound() {
+  const gens = [genSudutKlasifikasiRound, genSudutEstimasiRound, genSudutPasanganRound, genSudutGarisRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+function renderSudutBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.kind === "shape_mc") return renderShapeMc(lvl);
+  if (r.kind === "sudut_estimasi") return renderSudutEstimasi(lvl);
+  return renderAssemble(lvl);
+}
+
+function genKelilingPersegiRound() {
+  const s = randInt(4, 25);
+  const correct = String(4 * s).split("");
+  const text = `Sebuah taman berbentuk persegi dengan panjang sisi ${s} m. Berapa keliling taman itu?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genKelilingPPRound() {
+  const p = randInt(6, 30), l = randInt(3, p - 2);
+  const correct = String(2 * (p + l)).split("");
+  const text = `Sebuah taman berbentuk persegi panjang dengan panjang ${p} m dan lebar ${l} m. Berapa kelilingnya?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genKelilingSegitigaRound() {
+  const a = randInt(4, 12), b = randInt(4, 12);
+  const c = randInt(Math.abs(a - b) + 1, a + b - 1);
+  const correct = String(a + b + c).split("");
+  const text = `Sebuah taman berbentuk segitiga memiliki sisi ${a} m, ${b} m, dan ${c} m. Berapa kelilingnya?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genKelilingCariRound() {
+  const p = randInt(6, 20), l = randInt(3, p - 3);
+  const correct = String(l).split("");
+  const text = `Keliling sebuah taman persegi panjang adalah ${2 * (p + l)} m. Jika panjangnya ${p} m, berapa lebarnya?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genKelilingIrregularRound() {
+  const n = randInt(4, 6);
+  const sides = Array.from({ length: n }, () => randInt(2, 9));
+  const correct = String(sides.reduce((a, b) => a + b, 0)).split("");
+  const text = `Sebuah taman tidak beraturan memiliki sisi-sisi sepanjang ${sides.join(" m, ")} m. Berapa kelilingnya?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genKelilingBossRound() {
+  const gens = [genKelilingPersegiRound, genKelilingPPRound, genKelilingSegitigaRound, genKelilingCariRound, genKelilingIrregularRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+
+function genLuasPersegiRound() {
+  const s = randInt(3, 15);
+  const correct = String(s * s).split("");
+  const text = `Sebuah kebun berbentuk persegi dengan sisi ${s} m. Berapa luasnya (dalam m²)?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genLuasPPRound() {
+  const p = randInt(4, 15), l = randInt(3, p);
+  const correct = String(p * l).split("");
+  const text = `Sebuah kebun berbentuk persegi panjang dengan panjang ${p} m dan lebar ${l} m. Berapa luasnya (dalam m²)?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genLuasSegitigaRound() {
+  const alas = randInt(2, 10) * 2, tinggi = randInt(3, 12);
+  const correct = String((alas * tinggi) / 2).split("");
+  const text = `Sebuah kebun berbentuk segitiga memiliki alas ${alas} m dan tinggi ${tinggi} m. Berapa luasnya (dalam m²)?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genLuasCariRound() {
+  const p = randInt(3, 12), l = randInt(2, 10);
+  const correct = String(l).split("");
+  const text = `Luas sebuah kebun persegi panjang adalah ${p * l} m². Jika panjangnya ${p} m, berapa lebarnya?`;
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genLuasBoss5Round() {
+  const gens = [genLuasPersegiRound, genLuasPPRound, genLuasSegitigaRound, genAreaRound, genLuasCariRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+
+/* ==========================================================================
    ANALISIS DATA GENERATORS — Lessons 58-60
    ========================================================================== */
 const DATA_ICONS = ["🍎", "🍊", "🍌", "🍇", "🍉"];
@@ -2805,6 +2947,23 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "lengthconv") rounds.push(genLengthConvertRound());
     else if (lvl.type === "weightconv") rounds.push(genWeightConvertRound());
     else if (lvl.type === "measureboss") rounds.push(genMeasureBossRound());
+    else if (lvl.type === "sudutklasifikasi") rounds.push(genSudutKlasifikasiRound());
+    else if (lvl.type === "sudutestimasi") rounds.push(genSudutEstimasiRound());
+    else if (lvl.type === "sudutpasangan") rounds.push(genSudutPasanganRound());
+    else if (lvl.type === "sudutgaris") rounds.push(genSudutGarisRound());
+    else if (lvl.type === "sudutboss") rounds.push(genSudutBossRound());
+    else if (lvl.type === "kelilingpersegi") rounds.push(genKelilingPersegiRound());
+    else if (lvl.type === "kelilingpp") rounds.push(genKelilingPPRound());
+    else if (lvl.type === "kelilingsegitiga") rounds.push(genKelilingSegitigaRound());
+    else if (lvl.type === "kelilingcari") rounds.push(genKelilingCariRound());
+    else if (lvl.type === "kelilingirregular") rounds.push(genKelilingIrregularRound());
+    else if (lvl.type === "kelilingboss") rounds.push(genKelilingBossRound());
+    else if (lvl.type === "luaspersegi") rounds.push(genLuasPersegiRound());
+    else if (lvl.type === "luaspp") rounds.push(genLuasPPRound());
+    else if (lvl.type === "luassegitiga") rounds.push(genLuasSegitigaRound());
+    else if (lvl.type === "luasgrid") rounds.push(genAreaRound());
+    else if (lvl.type === "luascari") rounds.push(genLuasCariRound());
+    else if (lvl.type === "luasboss5") rounds.push(genLuasBoss5Round());
     else if (lvl.type === "pictogram") rounds.push(genPictogramRound());
     else if (lvl.type === "barchart") rounds.push(genBarChartRound());
     else if (lvl.type === "databoss1") rounds.push(genDataBossRound());
@@ -3214,6 +3373,96 @@ const TOPICS_GEOMETRI5 = [
   },
 ];
 
+const LEVELS_SUDUT5 = [
+  { id: 1, emoji: "📐", color: "l1", type: "sudutklasifikasi",
+    name: { id: "Klasifikasi Sudut", en: "Angle Classification", ru: "Классификация углов" },
+    desc: { id: "Lancip, siku-siku, atau tumpul?", en: "Acute, right, or obtuse?", ru: "Острый, прямой или тупой?" } },
+  { id: 2, emoji: "🔎", color: "l2", type: "sudutestimasi",
+    name: { id: "Taksir Sudut", en: "Angle Estimation", ru: "Оценка угла" },
+    desc: { id: "Kenali jenis sudut dari besarnya", en: "Recognize the angle type from its measure", ru: "Определи вид угла по его величине" } },
+  { id: 3, emoji: "🔗", color: "l3", type: "sudutpasangan",
+    name: { id: "Sudut Berpasangan", en: "Paired Angles", ru: "Парные углы" },
+    desc: { id: "Berpelurus (180°) dan berpenyiku (90°)", en: "Supplementary (180°) and complementary (90°)", ru: "Смежные (180°) и дополнительные (90°)" } },
+  { id: 4, emoji: "📏", color: "l5", type: "sudutgaris",
+    name: { id: "Sudut pada Garis", en: "Angles on a Line", ru: "Углы на прямой" },
+    desc: { id: "Jumlah sudut di sekitar satu titik", en: "Sum of angles around a point", ru: "Сумма углов вокруг точки" } },
+  { id: 5, emoji: "🕵️", color: "l4", type: "sudutboss",
+    name: { id: "Detektif Sudut", en: "Angle Detective", ru: "Детектив углов" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_KELILING6 = [
+  { id: 1, emoji: "🟥", color: "l1", type: "kelilingpersegi",
+    name: { id: "Keliling Persegi", en: "Perimeter of a Square", ru: "Периметр квадрата" },
+    desc: { id: "4 × sisi", en: "4 × side", ru: "4 × сторона" } },
+  { id: 2, emoji: "▭", color: "l2", type: "kelilingpp",
+    name: { id: "Keliling Persegi Panjang", en: "Perimeter of a Rectangle", ru: "Периметр прямоугольника" },
+    desc: { id: "2 × (panjang + lebar)", en: "2 × (length + width)", ru: "2 × (длина + ширина)" } },
+  { id: 3, emoji: "🔺", color: "l3", type: "kelilingsegitiga",
+    name: { id: "Keliling Segitiga", en: "Perimeter of a Triangle", ru: "Периметр треугольника" },
+    desc: { id: "Jumlah semua sisi", en: "Sum of all sides", ru: "Сумма всех сторон" } },
+  { id: 4, emoji: "🔍", color: "l5", type: "kelilingcari",
+    name: { id: "Mencari Sisi", en: "Finding a Missing Side", ru: "Поиск стороны" },
+    desc: { id: "Diketahui keliling, cari sisinya", en: "Given the perimeter, find the side", ru: "По периметру найди сторону" } },
+  { id: 5, emoji: "🧩", color: "l6", type: "kelilingirregular",
+    name: { id: "Bangun Tak Beraturan", en: "Irregular Shapes", ru: "Неправильные фигуры" },
+    desc: { id: "Jumlahkan semua sisinya", en: "Add up every side", ru: "Сложи все стороны" } },
+  { id: 6, emoji: "🕵️", color: "l4", type: "kelilingboss",
+    name: { id: "Detektif Keliling", en: "Perimeter Detective", ru: "Детектив периметра" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_LUAS6 = [
+  { id: 1, emoji: "🟩", color: "l1", type: "luaspersegi",
+    name: { id: "Luas Persegi", en: "Area of a Square", ru: "Площадь квадрата" },
+    desc: { id: "sisi × sisi", en: "side × side", ru: "сторона × сторона" } },
+  { id: 2, emoji: "▬", color: "l2", type: "luaspp",
+    name: { id: "Luas Persegi Panjang", en: "Area of a Rectangle", ru: "Площадь прямоугольника" },
+    desc: { id: "panjang × lebar", en: "length × width", ru: "длина × ширина" } },
+  { id: 3, emoji: "🔻", color: "l3", type: "luassegitiga",
+    name: { id: "Luas Segitiga", en: "Area of a Triangle", ru: "Площадь треугольника" },
+    desc: { id: "(alas × tinggi) ÷ 2", en: "(base × height) ÷ 2", ru: "(основание × высота) ÷ 2" } },
+  { id: 4, emoji: "🔢", color: "l5", type: "luasgrid",
+    name: { id: "Luas dari Petak", en: "Area by Counting Squares", ru: "Площадь по клеткам" },
+    desc: { id: "Hitung petak satuan", en: "Count the unit squares", ru: "Посчитай клетки" } },
+  { id: 5, emoji: "🔍", color: "l6", type: "luascari",
+    name: { id: "Mencari Lebar", en: "Finding a Missing Side", ru: "Поиск стороны" },
+    desc: { id: "Diketahui luas, cari lebarnya", en: "Given the area, find the width", ru: "По площади найди ширину" } },
+  { id: 6, emoji: "🕵️", color: "l4", type: "luasboss5",
+    name: { id: "Detektif Luas", en: "Area Detective", ru: "Детектив площади" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const TOPICS_PENGUKURAN5 = [
+  {
+    id: "sudut5", emoji: "📐", levels: LEVELS_SUDUT5,
+    name: { id: "Menara Sudut", en: "Angle Tower", ru: "Башня углов" },
+    subtitle: { id: "Sudut (5 pelajaran)", en: "Angles (5 lessons)", ru: "Углы (5 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 5 pelajaran topik \"Sudut\" (Kelas 5, Router Matematika, G5-L54 s/d G5-L58).",
+      en: "This game generates unlimited new questions for all 5 lessons of the \"Angles\" topic (Grade 5 Math Router, G5-L54 to G5-L58).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 5 уроков темы «Углы» (Класс 5, роутер математики, G5-L54 — G5-L58).",
+    },
+  },
+  {
+    id: "keliling6", emoji: "📏", levels: LEVELS_KELILING6,
+    name: { id: "Jalan Keliling", en: "Perimeter Path", ru: "Путь периметра" },
+    subtitle: { id: "Keliling (6 pelajaran)", en: "Perimeter (6 lessons)", ru: "Периметр (6 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 6 pelajaran topik \"Keliling\" (Kelas 5, Router Matematika, G5-L59 s/d G5-L64).",
+      en: "This game generates unlimited new questions for all 6 lessons of the \"Perimeter\" topic (Grade 5 Math Router, G5-L59 to G5-L64).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 6 уроков темы «Периметр» (Класс 5, роутер математики, G5-L59 — G5-L64).",
+    },
+  },
+  {
+    id: "luas6", emoji: "🟩", levels: LEVELS_LUAS6,
+    name: { id: "Ladang Luas", en: "Area Fields", ru: "Поля площади" },
+    subtitle: { id: "Luas (6 pelajaran)", en: "Area (6 lessons)", ru: "Площадь (6 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 6 pelajaran topik \"Luas\" (Kelas 5, Router Matematika, G5-L65 s/d G5-L70).",
+      en: "This game generates unlimited new questions for all 6 lessons of the \"Area\" topic (Grade 5 Math Router, G5-L65 to G5-L70).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 6 уроков темы «Площадь» (Класс 5, роутер математики, G5-L65 — G5-L70).",
+    },
+  },
+];
+
 const BLOCKS = [
   {
     id: "bilangan", emoji: "🔢", topics: TOPICS_BILANGAN5,
@@ -3244,6 +3493,12 @@ const BLOCKS = [
     name: { id: "Geometri", en: "Geometry", ru: "Геометрия" },
     desc: { id: "1 distrik · 6 stasiun", en: "1 district · 6 stations", ru: "1 район · 6 станций" },
     story: { key: "geometriStory" },
+  },
+  {
+    id: "pengukuran5", emoji: "📏", topics: TOPICS_PENGUKURAN5,
+    name: { id: "Pengukuran", en: "Measurement", ru: "Измерение" },
+    desc: { id: "3 distrik · 17 stasiun", en: "3 districts · 17 stations", ru: "3 района · 17 станций" },
+    story: { key: "pengukuranStory" },
   },
 ];
 
@@ -3284,6 +3539,9 @@ const CHARACTER_BY_TYPE = {
   compose: "dara", decompose: "dara", spatialboss: "baron",
   area: "dara", areacompare: "kumar", volume: "dara", luasboss: "baron",
   lengthconv: "kumar", weightconv: "kumar", measureboss: "baron",
+  sudutklasifikasi: "dara", sudutestimasi: "dara", sudutpasangan: "robi", sudutgaris: "robi", sudutboss: "baron",
+  kelilingpersegi: "kumar", kelilingpp: "kumar", kelilingsegitiga: "kumar", kelilingcari: "kumar", kelilingirregular: "kumar", kelilingboss: "baron",
+  luaspersegi: "nina", luaspp: "nina", luassegitiga: "nina", luasgrid: "nina", luascari: "nina", luasboss5: "baron",
   pictogram: "nina", barchart: "nina", databoss1: "baron",
   datacompare: "kumar", databoss2: "baron",
   read5: "robi", write5: "robi", placevalue5: "dara", compare5: "kumar", order5: "kumar", mixed5: "baron",
@@ -3328,6 +3586,9 @@ const DISTRICT_IMAGES = {
   penyajian5: IMAGES.royalLibrary,
   interpretasi5: IMAGES.heroesFinale,
   geometri5: IMAGES.gardenMaze,
+  sudut5: IMAGES.nightObservatory,
+  keliling6: IMAGES.bridgeRepair,
+  luas6: IMAGES.inventorsWorkshop,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
@@ -3335,8 +3596,9 @@ const BLOCK_IMAGES = {
   aljabar5: IMAGES.nightObservatory,
   data5: IMAGES.royalLibrary,
   geometri5: IMAGES.gardenMaze,
+  pengukuran5: IMAGES.bridgeRepair,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss", "sudutboss", "kelilingboss", "luasboss5"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -3693,6 +3955,11 @@ function renderLevel() {
   else if (lvl.type === "trianglesides3") container.appendChild(renderMultiSelect(lvl));
   else if (lvl.type === "trianglesum") container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "geoboss") container.appendChild(renderGeometriBoss(lvl));
+  else if (lvl.type === "sudutklasifikasi") container.appendChild(renderShapeMc(lvl));
+  else if (lvl.type === "sudutestimasi") container.appendChild(renderSudutEstimasi(lvl));
+  else if (["sudutpasangan", "sudutgaris"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "sudutboss") container.appendChild(renderSudutBoss(lvl));
+  else if (["kelilingpersegi", "kelilingpp", "kelilingsegitiga", "kelilingcari", "kelilingirregular", "kelilingboss", "luaspersegi", "luaspp", "luassegitiga", "luasgrid", "luascari", "luasboss5"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "areacompare" || lvl.type === "datacompare") container.appendChild(renderAreaCompare(lvl));
   else if (["pictogram", "barchart", "databoss1", "databoss2"].includes(lvl.type)) container.appendChild(renderDataChart(lvl));
   else if (lvl.type === "match" || lvl.type === "primematch") container.appendChild(renderMatch(lvl));
