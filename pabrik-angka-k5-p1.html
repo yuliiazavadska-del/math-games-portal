@@ -537,6 +537,8 @@ const UI = {
     placeLabels7: ["Jutaan", "Ratusan Ribu", "Puluhan Ribu", "Ribuan", "Ratusan", "Puluhan", "Satuan"],
     kingdomStoryK5: "👑 <b>Kerajaan Angka</b>: Kelas 5 dimulai! <b>Baron Nol</b> sekarang bersembunyi di kota-kota dengan bilangan yang jauh lebih besar. Bantu Robi, Pedagang Kumar, Koki Nina &amp; Arsitek Dara menangkap triknya di setiap distrik.",
     arenaStoryK5: "⚔️ <b>Arena Operasi Besar</b>: <b>Baron Nol</b> mengacaukan hitungan dengan angka besar dan pecahan! Bantu Robi, Arsitek Dara &amp; Pedagang Kumar menangkapnya di tiap distrik.",
+    puzzleStoryK5: "🔮 <b>Menara Pola</b>: <b>Baron Nol</b> menyembunyikan pola dan angka rahasia di sini! Bantu Robi &amp; Arsitek Dara memecahkan teka-tekinya.",
+    dataStoryK5: "📊 <b>Balai Data Besar</b>: <b>Baron Nol</b> mengacaukan catatan dan grafik kerajaan! Bantu Koki Nina &amp; Pedagang Kumar merapikan datanya di setiap distrik.",
     fixBankHint: "Seret kata yang benar ke kata yang salah (atau ketuk):",
     levelCompleteTitle: "Level selesai!",
     rocketTitle: "Roket meluncur! Kamu jagoan angka!",
@@ -633,6 +635,7 @@ const UI = {
     equivTablePrompt: "Lengkapi pecahan senilai ini!",
     estimatePrompt: "Perkirakan hasil dari <b>{expr}</b> (bulatkan dulu)!",
     operationMatchPrompt: "Pasangkan setiap situasi dengan operasi yang tepat!",
+    freqTablePrompt: "Lengkapi tabel frekuensi ini!",
     scenarioCombine: "Menggabungkan dua kelompok",
     scenarioTakeAway: "Mengambil sebagian",
     scenarioGroups: "Beberapa kelompok sama besar",
@@ -652,6 +655,8 @@ const UI = {
     placeLabels7: ["Millions", "Hundred Thousands", "Ten Thousands", "Thousands", "Hundreds", "Tens", "Ones"],
     kingdomStoryK5: "👑 <b>Number Kingdom</b>: Grade 5 begins! <b>Baron Zero</b> is now hiding in towns with much bigger numbers. Help Robi, Trader Kumar, Baker Nina &amp; Architect Dara catch his tricks in every district.",
     arenaStoryK5: "⚔️ <b>Big Operations Arena</b>: <b>Baron Zero</b> is scrambling calculations with big numbers and fractions! Help Robi, Architect Dara &amp; Trader Kumar catch him in every district.",
+    puzzleStoryK5: "🔮 <b>Pattern Tower</b>: <b>Baron Zero</b> is hiding patterns and secret numbers here! Help Robi &amp; Architect Dara solve his puzzles.",
+    dataStoryK5: "📊 <b>Big Data Hall</b>: <b>Baron Zero</b> is scrambling the kingdom's records and charts! Help Baker Nina &amp; Trader Kumar tidy up the data in every district.",
     fixBankHint: "Drag the correct word onto the mistake (or tap it):",
     levelCompleteTitle: "Level complete!",
     rocketTitle: "Blast off! You're a number champion!",
@@ -748,6 +753,7 @@ const UI = {
     equivTablePrompt: "Fill in this equivalent fraction!",
     estimatePrompt: "Estimate the result of <b>{expr}</b> (round first)!",
     operationMatchPrompt: "Match each situation with the right operation!",
+    freqTablePrompt: "Fill in this frequency table!",
     scenarioCombine: "Combining two groups",
     scenarioTakeAway: "Taking part away",
     scenarioGroups: "Several equal-sized groups",
@@ -767,6 +773,8 @@ const UI = {
     placeLabels7: ["Миллионы", "Сотни тысяч", "Десятки тысяч", "Тысячи", "Сотни", "Десятки", "Единицы"],
     kingdomStoryK5: "👑 <b>Королевство Чисел</b>: Начинается 5 класс! <b>Барон Ноль</b> теперь прячется в городах с гораздо большими числами. Помоги Роби, Торговцу Кумару, Пекарю Нине и Архитектору Даре поймать его в каждом районе.",
     arenaStoryK5: "⚔️ <b>Большая арена операций</b>: <b>Барон Ноль</b> путает вычисления с большими числами и дробями! Помоги Роби, Архитектору Даре и Торговцу Кумару поймать его в каждом районе.",
+    puzzleStoryK5: "🔮 <b>Башня узоров</b>: <b>Барон Ноль</b> прячет здесь узоры и секретные числа! Помоги Роби и Архитектору Даре разгадать его загадки.",
+    dataStoryK5: "📊 <b>Большой зал данных</b>: <b>Барон Ноль</b> путает записи и графики королевства! Помоги Пекарю Нине и Торговцу Кумару навести порядок в данных каждого района.",
     fixBankHint: "Перетащи правильное слово на ошибку (или нажми):",
     levelCompleteTitle: "Уровень пройден!",
     rocketTitle: "Ракета взлетает! Ты чемпион по числам!",
@@ -863,6 +871,7 @@ const UI = {
     equivTablePrompt: "Заполни эту равную дробь!",
     estimatePrompt: "Оцени результат <b>{expr}</b> (сначала округли)!",
     operationMatchPrompt: "Соедини каждую ситуацию с нужным действием!",
+    freqTablePrompt: "Заполни эту таблицу частот!",
     scenarioCombine: "Объединение двух групп",
     scenarioTakeAway: "Убрать часть",
     scenarioGroups: "Несколько одинаковых групп",
@@ -1404,6 +1413,71 @@ function genMixedWordRound() {
 }
 function genTerapanBossRound() {
   return Math.random() < 0.5 ? genOperationMatchRound() : genMixedWordRound();
+}
+
+/* ==========================================================================
+   KELAS 5 — "Aljabar" block generators (Lessons 45-47)
+   ========================================================================== */
+function genPatternMul5Round() {
+  const start = randInt(1, 4);
+  const ratio = randInt(2, 3);
+  const stages = [start, start * ratio, start * ratio * ratio];
+  const answer = start * ratio * ratio * ratio;
+  const correct = String(answer).split("");
+  return { mode: "pattern", stages, correct, decoys: digitDecoys(correct), visual: false, promptKey: "patternNumPrompt" };
+}
+function genPatternDiv5Round() {
+  const ratio = randInt(2, 3);
+  const base = randInt(2, 5);
+  const start = base * ratio * ratio * ratio;
+  const stages = [start, start / ratio, start / (ratio * ratio)];
+  const answer = start / (ratio * ratio * ratio);
+  const correct = String(answer).split("");
+  return { mode: "pattern", stages, correct, decoys: digitDecoys(correct), visual: false, promptKey: "patternNumPrompt" };
+}
+function genUnknownEq5Round() {
+  const op = ["+", "-", "×", "÷"][randInt(0, 3)];
+  let exprText, missing;
+  if (op === "+") {
+    const a = randInt(50, 500), b = randInt(50, 500), c = a + b;
+    if (Math.random() < 0.5) { exprText = `? + ${b} = ${c}`; missing = a; } else { exprText = `${a} + ? = ${c}`; missing = b; }
+  } else if (op === "-") {
+    const b = randInt(50, 400), diff = randInt(50, 400), a = b + diff;
+    if (Math.random() < 0.5) { exprText = `? - ${b} = ${diff}`; missing = a; } else { exprText = `${a} - ? = ${diff}`; missing = b; }
+  } else if (op === "×") {
+    const a = randInt(2, 25), b = randInt(2, 40), c = a * b;
+    if (Math.random() < 0.5) { exprText = `? × ${b} = ${c}`; missing = a; } else { exprText = `${a} × ? = ${c}`; missing = b; }
+  } else {
+    const b = randInt(2, 25), quotient = randInt(2, 40), a = b * quotient;
+    if (Math.random() < 0.5) { exprText = `? ÷ ${b} = ${quotient}`; missing = a; } else { exprText = `${a} ÷ ? = ${quotient}`; missing = b; }
+  }
+  const correct = String(missing).split("");
+  return { mode: "arithmetic", exprText, correct, decoys: digitDecoys(correct), promptKey: "unknownPrompt" };
+}
+function genAljabarBoss5Round() {
+  const gens = [genPatternMul5Round, genPatternDiv5Round, genUnknownEq5Round];
+  return gens[randInt(0, gens.length - 1)]();
+}
+
+/* ==========================================================================
+   KELAS 5 — "Analisis Data" block generators (Lessons 71-78). Reuses the
+   pictogram/bar-chart/compare engine built for Kelas 4's Analisis Data.
+   ========================================================================== */
+function genFreqTableRound() {
+  const icons = shuffle(DATA_ICONS.slice()).slice(0, 3);
+  const counts = icons.map(() => randInt(2, 9));
+  const blankIdx = randInt(0, 2);
+  const cellValues = [];
+  icons.forEach((ic, i) => { cellValues.push(ic); cellValues.push(i === blankIdx ? null : fmt(counts[i])); });
+  const correct = [fmt(counts[blankIdx])];
+  const decoy1 = fmt(counts[blankIdx] + 1), decoy2 = fmt(Math.max(1, counts[blankIdx] - 1));
+  return { mode: "table", promptKey: "freqTablePrompt", cols: 2, cellValues, correct, decoys: [decoy1, decoy2] };
+}
+function genPengumpulanBossRound() {
+  return Math.random() < 0.5 ? genFreqTableRound() : genPictogramRound();
+}
+function genPenyajianBossRound() {
+  return genDataBossRound();
 }
 
 /* ==========================================================================
@@ -2717,6 +2791,12 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "terapanmatch") rounds.push(genOperationMatchRound());
     else if (lvl.type === "terapanword") rounds.push(genMixedWordRound());
     else if (lvl.type === "terapanboss") rounds.push(genTerapanBossRound());
+    else if (lvl.type === "patternmul5") rounds.push(genPatternMul5Round());
+    else if (lvl.type === "patterndiv5") rounds.push(genPatternDiv5Round());
+    else if (lvl.type === "unknowneq5") rounds.push(genUnknownEq5Round());
+    else if (lvl.type === "aljabarboss5") rounds.push(genAljabarBoss5Round());
+    else if (lvl.type === "freqtable") rounds.push(genFreqTableRound());
+    else if (lvl.type === "pengumpulanboss") rounds.push(genPengumpulanBossRound());
   }
   return rounds;
 }
@@ -2951,6 +3031,93 @@ const TOPICS_OPERASI5 = [
   },
 ];
 
+const LEVELS_ALJABAR5 = [
+  { id: 1, emoji: "📈", color: "l1", type: "patternmul5",
+    name: { id: "Pola Membesar (Kali)", en: "Growing Pattern (×)", ru: "Растущий узор (×)" },
+    desc: { id: "Pola bilangan dengan perkalian", en: "Number pattern via multiplication", ru: "Узор через умножение" } },
+  { id: 2, emoji: "📉", color: "l2", type: "patterndiv5",
+    name: { id: "Pola Mengecil (Bagi)", en: "Shrinking Pattern (÷)", ru: "Убывающий узор (÷)" },
+    desc: { id: "Pola bilangan dengan pembagian", en: "Number pattern via division", ru: "Узор через деление" } },
+  { id: 3, emoji: "🔍", color: "l3", type: "unknowneq5",
+    name: { id: "Kalimat Matematika", en: "Math Sentences", ru: "Математические предложения" },
+    desc: { id: "Cari nilai yang belum diketahui", en: "Find the unknown value", ru: "Найди неизвестное значение" } },
+  { id: 4, emoji: "🕵️", color: "l4", type: "aljabarboss5",
+    name: { id: "Detektif Aljabar", en: "Algebra Detective", ru: "Детектив алгебры" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const TOPICS_ALJABAR5 = [
+  {
+    id: "aljabar5", emoji: "🔮", levels: LEVELS_ALJABAR5,
+    name: { id: "Menara Pola & Kalimat", en: "Pattern & Sentence Tower", ru: "Башня узоров и уравнений" },
+    subtitle: { id: "Pola Bilangan dan Kalimat Matematika (3 pelajaran)", en: "Number Patterns and Math Sentences (3 lessons)", ru: "Числовые узоры и уравнения (3 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 3 pelajaran topik \"Pola Bilangan dan Kalimat Matematika\" (Kelas 5, Router Matematika, G5-L45 s/d G5-L47).",
+      en: "This game generates unlimited new questions for all 3 lessons of the \"Number Patterns and Math Sentences\" topic (Grade 5 Math Router, G5-L45 to G5-L47).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 3 уроков темы «Числовые узоры и уравнения» (Класс 5, роутер математики, G5-L45 — G5-L47).",
+    },
+  },
+];
+
+const LEVELS_PENGUMPULAN5 = [
+  { id: 1, emoji: "📋", color: "l1", type: "freqtable",
+    name: { id: "Tabel Frekuensi", en: "Frequency Table", ru: "Таблица частот" },
+    desc: { id: "Ubah data mentah jadi tabel", en: "Turn raw data into a table", ru: "Преврати данные в таблицу" } },
+  { id: 2, emoji: "🕵️", color: "l4", type: "pengumpulanboss",
+    name: { id: "Detektif Pengumpulan", en: "Data Collection Detective", ru: "Детектив сбора данных" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_PENYAJIAN5 = [
+  { id: 1, emoji: "🍎", color: "l1", type: "pictogram",
+    name: { id: "Piktogram", en: "Pictograms", ru: "Пиктограммы" },
+    desc: { id: "Buat, baca, dan analisis", en: "Make, read, and analyze", ru: "Создавай и читай" } },
+  { id: 2, emoji: "📊", color: "l2", type: "barchart",
+    name: { id: "Diagram Batang", en: "Bar Charts", ru: "Столбчатые диаграммы" },
+    desc: { id: "Vertikal dan horizontal", en: "Vertical and horizontal", ru: "Вертикальные и горизонтальные" } },
+  { id: 3, emoji: "🕵️", color: "l4", type: "databoss1",
+    name: { id: "Detektif Penyajian", en: "Presentation Detective", ru: "Детектив представления данных" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_INTERPRETASI5 = [
+  { id: 1, emoji: "🔍", color: "l1", type: "datacompare",
+    name: { id: "Bandingkan Data", en: "Compare Data", ru: "Сравни данные" },
+    desc: { id: "Piktogram vs diagram batang", en: "Pictograms vs bar charts", ru: "Пиктограммы против диаграмм" } },
+  { id: 2, emoji: "🕵️", color: "l4", type: "databoss2",
+    name: { id: "Proyek Mini", en: "Mini Project", ru: "Мини-проект" },
+    desc: { id: "Level BOS — kumpulkan, sajikan, analisis!", en: "BOSS level — collect, present, analyze!", ru: "Уровень БОСС — собери, представь, проанализируй!" } },
+];
+const TOPICS_DATA5 = [
+  {
+    id: "pengumpulan5", emoji: "📋", levels: LEVELS_PENGUMPULAN5,
+    name: { id: "Pos Pengumpulan Data", en: "Data Collection Post", ru: "Пункт сбора данных" },
+    subtitle: { id: "Pengumpulan Data (2 pelajaran)", en: "Data Collection (2 lessons)", ru: "Сбор данных (2 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 2 pelajaran topik \"Pengumpulan Data\" (Kelas 5, Router Matematika, G5-L71 s/d G5-L72).",
+      en: "This game generates unlimited new questions for both lessons of the \"Data Collection\" topic (Grade 5 Math Router, G5-L71 to G5-L72).",
+      ru: "Игра генерирует бесконечное число новых заданий для обоих уроков темы «Сбор данных» (Класс 5, роутер математики, G5-L71 — G5-L72).",
+    },
+  },
+  {
+    id: "penyajian5", emoji: "📊", levels: LEVELS_PENYAJIAN5,
+    name: { id: "Balai Penyajian Data", en: "Data Presentation Hall", ru: "Зал представления данных" },
+    subtitle: { id: "Penyajian Data (4 pelajaran)", en: "Data Presentation (4 lessons)", ru: "Представление данных (4 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 4 pelajaran topik \"Penyajian Data\" (Kelas 5, Router Matematika, G5-L73 s/d G5-L76).",
+      en: "This game generates unlimited new questions for all 4 lessons of the \"Data Presentation\" topic (Grade 5 Math Router, G5-L73 to G5-L76).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 4 уроков темы «Представление данных» (Класс 5, роутер математики, G5-L73 — G5-L76).",
+    },
+  },
+  {
+    id: "interpretasi5", emoji: "🔍", levels: LEVELS_INTERPRETASI5,
+    name: { id: "Menara Interpretasi", en: "Interpretation Tower", ru: "Башня интерпретации" },
+    subtitle: { id: "Interpretasi dan Analisis (2 pelajaran)", en: "Interpretation and Analysis (2 lessons)", ru: "Интерпретация и анализ (2 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 2 pelajaran topik \"Interpretasi dan Analisis\" (Kelas 5, Router Matematika, G5-L77 s/d G5-L78).",
+      en: "This game generates unlimited new questions for both lessons of the \"Interpretation and Analysis\" topic (Grade 5 Math Router, G5-L77 to G5-L78).",
+      ru: "Игра генерирует бесконечное число новых заданий для обоих уроков темы «Интерпретация и анализ» (Класс 5, роутер математики, G5-L77 — G5-L78).",
+    },
+  },
+];
+
 const BLOCKS = [
   {
     id: "bilangan", emoji: "🔢", topics: TOPICS_BILANGAN5,
@@ -2963,6 +3130,18 @@ const BLOCKS = [
     name: { id: "Operasi Aritmetika", en: "Arithmetic Operations", ru: "Арифметические действия" },
     desc: { id: "3 distrik · 17 stasiun", en: "3 districts · 17 stations", ru: "3 района · 17 станций" },
     story: { key: "arenaStoryK5" },
+  },
+  {
+    id: "aljabar5", emoji: "🔮", topics: TOPICS_ALJABAR5,
+    name: { id: "Aljabar", en: "Algebra", ru: "Алгебра" },
+    desc: { id: "1 distrik · 4 stasiun", en: "1 district · 4 stations", ru: "1 район · 4 станции" },
+    story: { key: "puzzleStoryK5" },
+  },
+  {
+    id: "data5", emoji: "📊", topics: TOPICS_DATA5,
+    name: { id: "Analisis Data", en: "Data Analysis", ru: "Анализ данных" },
+    desc: { id: "3 distrik · 7 stasiun", en: "3 districts · 7 stations", ru: "3 района · 7 станций" },
+    story: { key: "dataStoryK5" },
   },
 ];
 
@@ -3013,6 +3192,8 @@ const CHARACTER_BY_TYPE = {
   add6: "robi", sub6: "robi", mult6: "dara", div6: "dara", estimate6: "kumar", wordproblem6: "kumar", opboss6: "baron",
   fracadd: "robi", mixedadd: "robi", fracsub: "robi", mixedsub: "robi", fracmultdiv: "dara", fracword: "kumar", fracopboss: "baron",
   terapanmatch: "dara", terapanword: "kumar", terapanboss: "baron",
+  patternmul5: "dara", patterndiv5: "dara", unknowneq5: "robi", aljabarboss5: "baron",
+  freqtable: "nina", pengumpulanboss: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -3039,12 +3220,18 @@ const DISTRICT_IMAGES = {
   opcacah5: IMAGES.inventorsWorkshop,
   oppecahan5: IMAGES.pasarPecahan,
   terapan5: IMAGES.riverRescue,
+  aljabar5: IMAGES.nightObservatory,
+  pengumpulan5: IMAGES.alunAlunPersen,
+  penyajian5: IMAGES.royalLibrary,
+  interpretasi5: IMAGES.heroesFinale,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
   operasi5: IMAGES.kingdom,
+  aljabar5: IMAGES.nightObservatory,
+  data5: IMAGES.royalLibrary,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -3426,6 +3613,9 @@ function renderLevel() {
   else if (["fracadd", "mixedadd", "fracsub", "mixedsub", "fracmultdiv", "fracword", "fracopboss", "terapanword"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "terapanmatch") container.appendChild(renderMatch(lvl));
   else if (lvl.type === "terapanboss") container.appendChild(renderTerapanBoss(lvl));
+  else if (["patternmul5", "patterndiv5", "unknowneq5", "aljabarboss5"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "freqtable") container.appendChild(renderTable(lvl));
+  else if (lvl.type === "pengumpulanboss") container.appendChild(renderPengumpulanBoss(lvl));
 
   return container;
 }
@@ -5065,6 +5255,11 @@ function checkTrueGrid(r, idx, guess) {
 
 /* Boss dispatcher for topics whose sub-generators each use a different
    mechanic — delegates by round mode, same pattern as renderDataChart. */
+function renderPengumpulanBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.mode === "table") return renderTable(lvl);
+  return renderDataChart(lvl);
+}
 function renderTerapanBoss(lvl) {
   const r = state.rounds[state.roundIndex];
   if (r.mode === "match") return renderMatch(lvl);
