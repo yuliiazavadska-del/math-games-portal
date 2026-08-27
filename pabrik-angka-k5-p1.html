@@ -534,6 +534,7 @@ const UI = {
     numberA: "Bilangan A", numberB: "Bilangan B",
     placeLabels: ["Ribuan", "Ratusan", "Puluhan", "Satuan"],
     placeLabels6: ["Ratusan Ribu", "Puluhan Ribu", "Ribuan", "Ratusan", "Puluhan", "Satuan"],
+    placeLabels7: ["Jutaan", "Ratusan Ribu", "Puluhan Ribu", "Ribuan", "Ratusan", "Puluhan", "Satuan"],
     kingdomStoryK5: "👑 <b>Kerajaan Angka</b>: Kelas 5 dimulai! <b>Baron Nol</b> sekarang bersembunyi di kota-kota dengan bilangan yang jauh lebih besar. Bantu Robi, Pedagang Kumar, Koki Nina &amp; Arsitek Dara menangkap triknya di setiap distrik.",
     fixBankHint: "Seret kata yang benar ke kata yang salah (atau ketuk):",
     levelCompleteTitle: "Level selesai!",
@@ -641,6 +642,7 @@ const UI = {
     numberA: "Number A", numberB: "Number B",
     placeLabels: ["Thousands", "Hundreds", "Tens", "Ones"],
     placeLabels6: ["Hundred Thousands", "Ten Thousands", "Thousands", "Hundreds", "Tens", "Ones"],
+    placeLabels7: ["Millions", "Hundred Thousands", "Ten Thousands", "Thousands", "Hundreds", "Tens", "Ones"],
     kingdomStoryK5: "👑 <b>Number Kingdom</b>: Grade 5 begins! <b>Baron Zero</b> is now hiding in towns with much bigger numbers. Help Robi, Trader Kumar, Baker Nina &amp; Architect Dara catch his tricks in every district.",
     fixBankHint: "Drag the correct word onto the mistake (or tap it):",
     levelCompleteTitle: "Level complete!",
@@ -748,6 +750,7 @@ const UI = {
     numberA: "Число А", numberB: "Число Б",
     placeLabels: ["Тысячи", "Сотни", "Десятки", "Единицы"],
     placeLabels6: ["Сотни тысяч", "Десятки тысяч", "Тысячи", "Сотни", "Десятки", "Единицы"],
+    placeLabels7: ["Миллионы", "Сотни тысяч", "Десятки тысяч", "Тысячи", "Сотни", "Десятки", "Единицы"],
     kingdomStoryK5: "👑 <b>Королевство Чисел</b>: Начинается 5 класс! <b>Барон Ноль</b> теперь прячется в городах с гораздо большими числами. Помоги Роби, Торговцу Кумару, Пекарю Нине и Архитектору Даре поймать его в каждом районе.",
     fixBankHint: "Перетащи правильное слово на ошибку (или нажми):",
     levelCompleteTitle: "Уровень пройден!",
@@ -1055,6 +1058,122 @@ function genFindOdd5Round() {
 }
 function genMixed5Round() {
   const generators = [genMcRatus5Round, genFixCompare5Round, genFindOdd5Round];
+  return generators[randInt(0, generators.length - 1)]();
+}
+
+/* ==========================================================================
+   KELAS 5 — number helpers for "Bilangan cacah sampai 1.000.000" (6 digits).
+   ========================================================================== */
+function randNum6() { return randInt(1, 9) * 100000 + randInt(0, 9) * 10000 + randInt(0, 9) * 1000 + randInt(0, 9) * 100 + randInt(0, 9) * 10 + randInt(0, 9); }
+function genZeroBiased6Number() {
+  const hundredThousands = randInt(1, 9);
+  let tenThousands = randInt(0, 9), thousands = randInt(0, 9), hundreds = randInt(0, 9), tens = randInt(0, 9), ones = randInt(0, 9);
+  if (Math.random() < 0.6) {
+    const slot = randInt(0, 4);
+    if (slot === 0) tenThousands = 0; else if (slot === 1) thousands = 0; else if (slot === 2) hundreds = 0; else if (slot === 3) tens = 0; else ones = 0;
+  }
+  return hundredThousands * 100000 + tenThousands * 10000 + thousands * 1000 + hundreds * 100 + tens * 10 + ones;
+}
+const PLACE_VALUES_7 = [1000000, 100000, 10000, 1000, 100, 10, 1];
+function placeCountsN7(n) { return PLACE_VALUES_7.map(pv => Math.floor(n / pv) % 10); }
+function expandedChipsN7(n) {
+  const chips = [];
+  PLACE_VALUES_7.forEach(pv => { const d = Math.floor(n / pv) % 10; if (d > 0) chips.push(fmt(d * pv)); });
+  return chips;
+}
+function describeCounts6(counts) {
+  const L = UI[state.lang].placeLabels7;
+  return [1, 2, 3, 4, 5, 6].map(i => `${counts[i]} ${L[i]}`).join(", ");
+}
+
+function genRead6Round() {
+  const n = Math.random() < 0.4 ? genZeroBiased6Number() : randNum6();
+  const correct = numberToWords(n);
+  return { mode: "toWords", number: n, correct, decoys: generateDecoys5(n, correct) };
+}
+function genWriteFromWords6Round() {
+  const n = genZeroBiased6Number();
+  const correct = String(n).split("");
+  return { mode: "toDigits", number: n, words: numberToWords(n), correct, decoys: digitDecoys(correct) };
+}
+function genWriteFromDescription6Round() {
+  const n = randNum6();
+  const correct = String(n).split("");
+  return { mode: "fromDescription", number: n, desc: describeCounts6(placeCountsN7(n)), correct, decoys: digitDecoys(correct) };
+}
+function genWrite6Round() { return Math.random() < 0.5 ? genWriteFromWords6Round() : genWriteFromDescription6Round(); }
+
+function genPlaceId6Round() {
+  const n = randNum6();
+  const numStr = String(n);
+  const nonZero = [...numStr].map((ch, i) => ({ d: Number(ch), i })).filter(x => x.d > 0);
+  const pick = nonZero[randInt(0, nonZero.length - 1)];
+  return { kind: "place_id6", number: n, numStr, digit: pick.d, placeIdx: pick.i };
+}
+function genExpanded6Round() {
+  const n = randNum6();
+  const correct = expandedChipsN7(n);
+  const counts = placeCountsN7(n);
+  const decoyPool = [];
+  if (counts[5] > 0) decoyPool.push(fmt(counts[5]));
+  if (counts[4] > 0) decoyPool.push(fmt(counts[4] * 10));
+  decoyPool.push(fmt(randInt(1, 9) * 10000));
+  const decoys = shuffle(decoyPool.filter(d => !correct.includes(d))).slice(0, 2);
+  return { kind: "expanded6", number: n, correct, decoys };
+}
+function genPlaceValue6Round() { return Math.random() < 0.5 ? genPlaceId6Round() : genExpanded6Round(); }
+
+function genCompare6Round() {
+  const roll = Math.random();
+  let a, b;
+  if (roll < 0.15) { a = randNum6(); b = a; }
+  else if (roll < 0.55) {
+    const place = randInt(0, 5);
+    const baseStr = String(randNum6()).padStart(6, "0");
+    let newDigit;
+    do { newDigit = randInt(0, 9); } while (newDigit === Number(baseStr[place]) || (place === 0 && newDigit === 0));
+    a = Number(baseStr);
+    b = Number(baseStr.slice(0, place) + newDigit + baseStr.slice(place + 1));
+  } else { a = randNum6(); b = randNum6(); while (b === a) b = randNum6(); }
+  const sign = a < b ? "<" : a > b ? ">" : "=";
+  return { a, b, sign };
+}
+function genOrder6Round() {
+  const count = randInt(3, 4);
+  const nums = new Set();
+  while (nums.size < count) nums.add(randNum6());
+  const list = [...nums];
+  const asc = Math.random() < 0.6;
+  const sorted = [...list].sort((x, y) => asc ? x - y : y - x);
+  return { list: shuffle(list), sorted, asc };
+}
+function genMcRatus6Round() {
+  let correctNum;
+  do { correctNum = randNum6(); } while (!ruleRatusNoPuluh(correctNum));
+  const options = [correctNum];
+  while (options.length < 4) {
+    const cand = randNum6();
+    if (!ruleRatusNoPuluh(cand) && !options.includes(cand)) options.push(cand);
+  }
+  const shuffled = shuffle(options);
+  return { kind: "mc_ratus", options: shuffled, correctIndex: shuffled.indexOf(correctNum) };
+}
+function genFixCompare6Round() {
+  const r = genCompare6Round();
+  const signs = ["<", ">", "="];
+  const wrongSigns = signs.filter(s => s !== r.sign);
+  const wrongSign = wrongSigns[randInt(0, wrongSigns.length - 1)];
+  return { kind: "fix", number: null, sentence: [wrongSign], bugIndex: 0, correctWord: r.sign, bank: shuffle(signs), fixA: r.a, fixB: r.b };
+}
+function genFindOdd6Round() {
+  const o = genOrder6Round();
+  const wrongPos = randInt(1, o.sorted.length - 1);
+  const displayed = o.sorted.slice();
+  [displayed[wrongPos - 1], displayed[wrongPos]] = [displayed[wrongPos], displayed[wrongPos - 1]];
+  return { kind: "find_odd", sequence: displayed, oddIndex: wrongPos };
+}
+function genMixed6Round() {
+  const generators = [genMcRatus6Round, genFixCompare6Round, genFindOdd6Round];
   return generators[randInt(0, generators.length - 1)]();
 }
 
@@ -2343,6 +2462,12 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "fcompare5") rounds.push(genFCompare5Round());
     else if (lvl.type === "forder5") rounds.push(genFOrder5Round());
     else if (lvl.type === "pecahanboss") rounds.push(genPecahanBossRound());
+    else if (lvl.type === "read6") rounds.push(genRead6Round());
+    else if (lvl.type === "write6") rounds.push(genWrite6Round());
+    else if (lvl.type === "placevalue6") rounds.push(genPlaceValue6Round());
+    else if (lvl.type === "compare6") rounds.push(genCompare6Round());
+    else if (lvl.type === "order6") rounds.push(genOrder6Round());
+    else if (lvl.type === "mixed6") rounds.push(genMixed6Round());
   }
   return rounds;
 }
@@ -2422,6 +2547,27 @@ const LEVELS_PECAHAN5 = [
     desc: { id: "Level BOS — semua jebakan pecahan!", en: "BOSS level — all fraction traps!", ru: "Уровень БОСС — все ловушки с дробями!" } },
 ];
 
+const LEVELS_CACAH1JT = [
+  { id: 1, emoji: "🔤", color: "l1", type: "read6",
+    name: { id: "Baca Angka", en: "Read Numbers", ru: "Читай числа" },
+    desc: { id: "Ubah angka jadi kata (sampai 1.000.000)", en: "Turn digits into words (up to 1,000,000)", ru: "Превращай цифры в слова (до 1 000 000)" } },
+  { id: 2, emoji: "✍️", color: "l2", type: "write6",
+    name: { id: "Tulis Angka", en: "Write Numbers", ru: "Пиши числа" },
+    desc: { id: "Ubah kata jadi angka", en: "Turn words into digits", ru: "Превращай слова в цифры" } },
+  { id: 3, emoji: "🧩", color: "l3", type: "placevalue6",
+    name: { id: "Nilai Tempat", en: "Place Value", ru: "Разряды числа" },
+    desc: { id: "Ratusan ribu sampai satuan", en: "Hundred-thousands down to ones", ru: "От сотен тысяч до единиц" } },
+  { id: 4, emoji: "⚖️", color: "l5", type: "compare6",
+    name: { id: "Bandingkan", en: "Compare", ru: "Сравнивай" },
+    desc: { id: "Mana yang lebih besar?", en: "Which one is bigger?", ru: "Какое число больше?" } },
+  { id: 5, emoji: "📶", color: "l6", type: "order6",
+    name: { id: "Urutkan", en: "Put in Order", ru: "Расставляй по порядку" },
+    desc: { id: "Susun dari kecil ke besar", en: "Arrange smallest to largest", ru: "Расставь от меньшего к большему" } },
+  { id: 6, emoji: "🕵️", color: "l4", type: "mixed6",
+    name: { id: "Detektif Campuran", en: "Mixed Detective", ru: "Детектив-микс" },
+    desc: { id: "Level BOS — semua jebakan campur!", en: "BOSS level — all traps mixed!", ru: "Уровень БОСС — все ловушки вперемешку!" } },
+];
+
 const TOPICS_BILANGAN5 = [
   {
     id: "cacah100rb", emoji: "🏰", levels: LEVELS_CACAH100RB,
@@ -2453,13 +2599,23 @@ const TOPICS_BILANGAN5 = [
       ru: "Игра генерирует бесконечное число новых заданий для всех 9 уроков темы «Дроби» (Класс 5, роутер математики, G5-L24 — G5-L32).",
     },
   },
+  {
+    id: "cacah1jt", emoji: "🌆", levels: LEVELS_CACAH1JT,
+    name: { id: "Metropolis Angka", en: "Numbers Metropolis", ru: "Мегаполис Чисел" },
+    subtitle: { id: "Bilangan Cacah sampai 1.000.000 (4 pelajaran)", en: "Whole Numbers up to 1,000,000 (4 lessons)", ru: "Целые числа до 1 000 000 (4 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 4 pelajaran topik \"Bilangan cacah sampai 1.000.000\" (Kelas 5, Router Matematika, G5-L79 s/d G5-L82).",
+      en: "This game generates unlimited new questions for all 4 lessons of the \"Whole Numbers up to 1,000,000\" topic (Grade 5 Math Router, G5-L79 to G5-L82).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 4 уроков темы «Целые числа до 1 000 000» (Класс 5, роутер математики, G5-L79 — G5-L82).",
+    },
+  },
 ];
 
 const BLOCKS = [
   {
     id: "bilangan", emoji: "🔢", topics: TOPICS_BILANGAN5,
     name: { id: "Bilangan", en: "Numbers", ru: "Числа" },
-    desc: { id: "3 distrik · 21 stasiun", en: "3 districts · 21 stations", ru: "3 района · 21 станция" },
+    desc: { id: "4 distrik · 27 stasiun", en: "4 districts · 27 stations", ru: "4 района · 27 станций" },
     story: { key: "kingdomStoryK5" },
   },
 ];
@@ -2507,6 +2663,7 @@ const CHARACTER_BY_TYPE = {
   kpk: "kumar", fpb: "kumar", primevenn: "nina", kpkfpbboss: "baron",
   frackind: "nina", fracmixedmatch: "dara", fracline: "kumar", equivtable: "dara",
   fcompare5: "kumar", forder5: "kumar", pecahanboss: "baron",
+  read6: "robi", write6: "robi", placevalue6: "dara", compare6: "kumar", order6: "kumar", mixed6: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -2529,11 +2686,12 @@ const IMAGES = {
 const DISTRICT_IMAGES = {
   cacah100rb: IMAGES.kotaAngka,
   pecahan5: IMAGES.pasarPecahan,
+  cacah1jt: IMAGES.monorailJourney,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -2809,12 +2967,12 @@ function setupRound() {
     state.sortSelected = null;
   } else if (r.mode === "truegrid") {
     state.gridChecked = {};
-  } else if (lvl.type === "order" || lvl.type === "forder" || lvl.type === "order5" || lvl.type === "forder5" || lvl.type === "sequence") {
+  } else if (lvl.type === "order" || lvl.type === "forder" || lvl.type === "order5" || lvl.type === "forder5" || lvl.type === "order6" || lvl.type === "sequence") {
     state.orderPicked = [];
   } else if (lvl.type === "placevalue" && r.kind === "expanded") {
     state.pool = shuffle([...r.correct, ...r.decoys]);
     state.slot = [];
-  } else if (lvl.type === "placevalue5" && r.kind === "expanded5") {
+  } else if ((lvl.type === "placevalue5" || lvl.type === "placevalue6") && (r.kind === "expanded5" || r.kind === "expanded6")) {
     state.pool = shuffle([...r.correct, ...r.decoys]);
     state.slot = [];
   } else if (lvl.type === "dplacevalue" && r.kind === "dec_compose") {
@@ -2905,6 +3063,11 @@ function renderLevel() {
   else if (lvl.type === "fcompare5") container.appendChild(renderFCompare(lvl));
   else if (lvl.type === "forder5") container.appendChild(renderFOrder(lvl));
   else if (lvl.type === "pecahanboss") container.appendChild(renderPecahanBoss(lvl));
+  else if (lvl.type === "read6" || lvl.type === "write6") container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "placevalue6") container.appendChild(renderPlaceValue5(lvl));
+  else if (lvl.type === "compare6") container.appendChild(renderCompare(lvl));
+  else if (lvl.type === "order6") container.appendChild(renderOrder(lvl));
+  else if (lvl.type === "mixed6") container.appendChild(renderMixed(lvl));
 
   return container;
 }
@@ -3314,14 +3477,16 @@ function renderPlaceValue5(lvl) {
   meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
   panel.appendChild(meta);
 
-  if (r.kind === "place_id5") {
+  if (r.kind === "place_id5" || r.kind === "place_id6") {
     panel.appendChild(robotRow(t("placeIdPrompt", { digit: r.digit, number: fmt(r.number) })));
     const card = document.createElement("div");
     card.className = "duel-card";
     card.style.cssText = "max-width: 420px; margin: 0 auto 20px;";
     const cols = document.createElement("div");
     cols.className = "place-cols";
-    const labels5 = UI[state.lang].placeLabels6.slice(6 - r.numStr.length);
+    const labels5 = r.kind === "place_id6"
+      ? UI[state.lang].placeLabels7.slice(7 - r.numStr.length)
+      : UI[state.lang].placeLabels6.slice(6 - r.numStr.length);
     for (let i = 0; i < r.numStr.length; i++) {
       const cell = document.createElement("div");
       cell.className = "place-cell" + (i === r.placeIdx ? " digit-highlight" : "");
