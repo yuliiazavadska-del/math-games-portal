@@ -536,6 +536,7 @@ const UI = {
     placeLabels6: ["Ratusan Ribu", "Puluhan Ribu", "Ribuan", "Ratusan", "Puluhan", "Satuan"],
     placeLabels7: ["Jutaan", "Ratusan Ribu", "Puluhan Ribu", "Ribuan", "Ratusan", "Puluhan", "Satuan"],
     kingdomStoryK5: "👑 <b>Kerajaan Angka</b>: Kelas 5 dimulai! <b>Baron Nol</b> sekarang bersembunyi di kota-kota dengan bilangan yang jauh lebih besar. Bantu Robi, Pedagang Kumar, Koki Nina &amp; Arsitek Dara menangkap triknya di setiap distrik.",
+    arenaStoryK5: "⚔️ <b>Arena Operasi Besar</b>: <b>Baron Nol</b> mengacaukan hitungan dengan angka besar dan pecahan! Bantu Robi, Arsitek Dara &amp; Pedagang Kumar menangkapnya di tiap distrik.",
     fixBankHint: "Seret kata yang benar ke kata yang salah (atau ketuk):",
     levelCompleteTitle: "Level selesai!",
     rocketTitle: "Roket meluncur! Kamu jagoan angka!",
@@ -630,6 +631,12 @@ const UI = {
     fracMixedMatchPrompt: "Pasangkan pecahan tidak wajar dengan bilangan campurannya!",
     fracNumberLinePrompt: "Letakkan pecahan <b>{frac}</b> pada garis bilangan!",
     equivTablePrompt: "Lengkapi pecahan senilai ini!",
+    estimatePrompt: "Perkirakan hasil dari <b>{expr}</b> (bulatkan dulu)!",
+    operationMatchPrompt: "Pasangkan setiap situasi dengan operasi yang tepat!",
+    scenarioCombine: "Menggabungkan dua kelompok",
+    scenarioTakeAway: "Mengambil sebagian",
+    scenarioGroups: "Beberapa kelompok sama besar",
+    scenarioShare: "Membagi rata ke beberapa bagian",
   },
   en: {
     backToMap: "← Back to map",
@@ -644,6 +651,7 @@ const UI = {
     placeLabels6: ["Hundred Thousands", "Ten Thousands", "Thousands", "Hundreds", "Tens", "Ones"],
     placeLabels7: ["Millions", "Hundred Thousands", "Ten Thousands", "Thousands", "Hundreds", "Tens", "Ones"],
     kingdomStoryK5: "👑 <b>Number Kingdom</b>: Grade 5 begins! <b>Baron Zero</b> is now hiding in towns with much bigger numbers. Help Robi, Trader Kumar, Baker Nina &amp; Architect Dara catch his tricks in every district.",
+    arenaStoryK5: "⚔️ <b>Big Operations Arena</b>: <b>Baron Zero</b> is scrambling calculations with big numbers and fractions! Help Robi, Architect Dara &amp; Trader Kumar catch him in every district.",
     fixBankHint: "Drag the correct word onto the mistake (or tap it):",
     levelCompleteTitle: "Level complete!",
     rocketTitle: "Blast off! You're a number champion!",
@@ -738,6 +746,12 @@ const UI = {
     fracMixedMatchPrompt: "Match each improper fraction with its mixed number!",
     fracNumberLinePrompt: "Place the fraction <b>{frac}</b> on the number line!",
     equivTablePrompt: "Fill in this equivalent fraction!",
+    estimatePrompt: "Estimate the result of <b>{expr}</b> (round first)!",
+    operationMatchPrompt: "Match each situation with the right operation!",
+    scenarioCombine: "Combining two groups",
+    scenarioTakeAway: "Taking part away",
+    scenarioGroups: "Several equal-sized groups",
+    scenarioShare: "Sharing equally into parts",
   },
   ru: {
     backToMap: "← Назад к карте",
@@ -752,6 +766,7 @@ const UI = {
     placeLabels6: ["Сотни тысяч", "Десятки тысяч", "Тысячи", "Сотни", "Десятки", "Единицы"],
     placeLabels7: ["Миллионы", "Сотни тысяч", "Десятки тысяч", "Тысячи", "Сотни", "Десятки", "Единицы"],
     kingdomStoryK5: "👑 <b>Королевство Чисел</b>: Начинается 5 класс! <b>Барон Ноль</b> теперь прячется в городах с гораздо большими числами. Помоги Роби, Торговцу Кумару, Пекарю Нине и Архитектору Даре поймать его в каждом районе.",
+    arenaStoryK5: "⚔️ <b>Большая арена операций</b>: <b>Барон Ноль</b> путает вычисления с большими числами и дробями! Помоги Роби, Архитектору Даре и Торговцу Кумару поймать его в каждом районе.",
     fixBankHint: "Перетащи правильное слово на ошибку (или нажми):",
     levelCompleteTitle: "Уровень пройден!",
     rocketTitle: "Ракета взлетает! Ты чемпион по числам!",
@@ -846,6 +861,12 @@ const UI = {
     fracMixedMatchPrompt: "Соедини неправильную дробь с её смешанным числом!",
     fracNumberLinePrompt: "Отметь дробь <b>{frac}</b> на числовой прямой!",
     equivTablePrompt: "Заполни эту равную дробь!",
+    estimatePrompt: "Оцени результат <b>{expr}</b> (сначала округли)!",
+    operationMatchPrompt: "Соедини каждую ситуацию с нужным действием!",
+    scenarioCombine: "Объединение двух групп",
+    scenarioTakeAway: "Убрать часть",
+    scenarioGroups: "Несколько одинаковых групп",
+    scenarioShare: "Разделить поровну на части",
   },
 };
 
@@ -1175,6 +1196,214 @@ function genFindOdd6Round() {
 function genMixed6Round() {
   const generators = [genMcRatus6Round, genFixCompare6Round, genFindOdd6Round];
   return generators[randInt(0, generators.length - 1)]();
+}
+
+/* ==========================================================================
+   KELAS 5 — "Operasi Bilangan Cacah" topic generators (Lessons 6-14)
+   ========================================================================== */
+function genAdd6Round() {
+  const a = randInt(1200, 89999), b = randInt(1200, 87654);
+  const sum = a + b;
+  const correct = String(sum).split("");
+  return { mode: "arithmetic", exprText: `${fmt(a)} + ${fmt(b)}`, correct, decoys: digitDecoys(correct) };
+}
+function genSub6Round() {
+  const a = randInt(20000, 99999), b = randInt(1000, a - 500);
+  const diff = a - b;
+  const correct = String(diff).split("");
+  return { mode: "arithmetic", exprText: `${fmt(a)} - ${fmt(b)}`, correct, decoys: digitDecoys(correct) };
+}
+function genMult6Round() {
+  let a, b;
+  if (Math.random() < 0.5) { a = randInt(12, 89); b = randInt(12, 89); }
+  else { a = randInt(120, 8999); b = randInt(2, 9); }
+  const product = a * b;
+  const correct = String(product).split("");
+  return { mode: "arithmetic", exprText: `${fmt(a)} × ${fmt(b)}`, correct, decoys: digitDecoys(correct) };
+}
+function genDiv6Round() {
+  if (Math.random() < 0.5) {
+    const divisor = randInt(11, 40);
+    const quotient = randInt(3, 30);
+    const remainder = randInt(1, divisor - 1);
+    const dividend = divisor * quotient + remainder;
+    const correctStr = `${quotient} sisa ${remainder}`;
+    const decoyRem = remainder + 1 < divisor ? remainder + 1 : Math.max(1, remainder - 1);
+    return {
+      mode: "arithmetic", exprText: `${fmt(dividend)} ÷ ${divisor}`,
+      correct: [correctStr], decoys: [`${quotient + 1} sisa ${remainder}`, `${quotient} sisa ${decoyRem}`],
+    };
+  }
+  const divisor = randInt(2, 9);
+  const quotient = randInt(100, 9999);
+  const dividend = divisor * quotient;
+  const correct = String(quotient).split("");
+  return { mode: "arithmetic", exprText: `${fmt(dividend)} ÷ ${divisor}`, correct, decoys: digitDecoys(correct) };
+}
+function genEstimate6Round() {
+  const a = randInt(110, 9800), b = randInt(110, 9800);
+  const isAdd = Math.random() < 0.5;
+  const roundUnit = a > 999 || b > 999 ? 1000 : 100;
+  const roundedA = Math.round(a / roundUnit) * roundUnit, roundedB = Math.round(b / roundUnit) * roundUnit;
+  const estimate = isAdd ? roundedA + roundedB : Math.abs(roundedA - roundedB);
+  const optionsSet = new Set([estimate]);
+  while (optionsSet.size < 4) {
+    const decoy = estimate + randInt(1, 5) * roundUnit * (Math.random() < 0.5 ? 1 : -1);
+    if (decoy > 0) optionsSet.add(decoy);
+  }
+  const optionOrder = shuffle([...optionsSet]);
+  return {
+    kind: "mc_estimate", optionOrder, correctIndex: optionOrder.indexOf(estimate),
+    exprText: `${fmt(a)} ${isAdd ? "+" : "-"} ${fmt(b)}`,
+  };
+}
+function genWordProblem6Round() {
+  const templates = [
+    () => { const price = randInt(8, 45) * 1000, qty = randInt(3, 12); const extra = randInt(5, 30) * 1000; return { text: `Sebuah toko menjual ${qty} buku dengan harga Rp${fmt(price)} per buku. Ibu membayar dengan uang Rp${fmt(qty * price + extra)}. Berapa kembaliannya?`, ans: extra }; },
+    () => { const total = randInt(400, 900), boxes = randInt(4, 9); const perBox = Math.floor(total / boxes); const used = randInt(2, boxes - 1); return { text: `${fmt(total)} apel dibagi rata ke ${boxes} kotak. Berapa apel di ${used} kotak?`, ans: perBox * used }; },
+    () => { const rows = randInt(15, 60), perRow = randInt(8, 20); const empty = randInt(10, 100); return { text: `Sebuah gedung punya ${rows} baris kursi, tiap baris ${perRow} kursi. ${empty} kursi kosong. Berapa kursi terisi?`, ans: rows * perRow - empty }; },
+  ];
+  const picked = templates[randInt(0, templates.length - 1)]();
+  const correct = String(picked.ans).split("");
+  return { mode: "wordproblem", storyText: picked.text, correct, decoys: digitDecoys(correct) };
+}
+function genOpBoss6Round() {
+  const generators = [genAdd6Round, genSub6Round, genMult6Round, genDiv6Round];
+  return generators[randInt(0, generators.length - 1)]();
+}
+
+/* ==========================================================================
+   KELAS 5 — "Operasi Pecahan" topic generators (Lessons 33-40)
+   ========================================================================== */
+function addFractions(a, b) {
+  const den = (a.den * b.den) / gcd(a.den, b.den);
+  const num = a.num * (den / a.den) + b.num * (den / b.den);
+  const g = gcd(num, den) || 1;
+  return { num: num / g, den: den / g };
+}
+function subFractions(a, b) {
+  const den = (a.den * b.den) / gcd(a.den, b.den);
+  const num = a.num * (den / a.den) - b.num * (den / b.den);
+  const g = gcd(Math.abs(num), den) || 1;
+  return { num: num / g, den: den / g };
+}
+function mixedToImproper(whole, num, den) { return { num: whole * den + num, den }; }
+function improperToMixedStr(f) {
+  const whole = Math.floor(f.num / f.den);
+  const rem = f.num % f.den;
+  if (rem === 0) return String(whole);
+  const g = gcd(rem, f.den) || 1;
+  return whole === 0 ? `${rem / g}/${f.den / g}` : `${whole} ${rem / g}/${f.den / g}`;
+}
+function fracDecoys(correctStr, f) {
+  const cands = new Set([
+    fmtFrac({ num: f.num + 1, den: f.den }),
+    fmtFrac({ num: Math.max(0, f.num - 1) || 1, den: f.den }),
+    fmtFrac({ num: f.num, den: f.den + 1 }),
+  ]);
+  cands.delete(correctStr);
+  return [...cands].slice(0, 2);
+}
+function mixedDecoys(correctStr, f) {
+  const cands = new Set([
+    improperToMixedStr({ num: f.num + 1, den: f.den }),
+    improperToMixedStr({ num: Math.max(0, f.num - 1), den: f.den }),
+    improperToMixedStr({ num: f.num, den: f.den + 1 }),
+  ]);
+  cands.delete(correctStr);
+  return [...cands].slice(0, 2);
+}
+function genFracAddRound() {
+  const den1 = randInt(2, 10), den2 = randInt(2, 10);
+  const a = { num: randInt(1, den1 - 1), den: den1 }, b = { num: randInt(1, den2 - 1), den: den2 };
+  const result = addFractions(a, b);
+  const correctStr = fmtFrac(result);
+  return { mode: "arithmetic", exprText: `${fmtFrac(a)} + ${fmtFrac(b)}`, correct: [correctStr], decoys: fracDecoys(correctStr, result) };
+}
+function genFracSubRound() {
+  let den1 = randInt(2, 10), den2 = randInt(2, 10);
+  let num1 = randInt(1, den1 - 1), num2 = randInt(1, den2 - 1);
+  if (num1 / den1 < num2 / den2) { [num1, den1, num2, den2] = [num2, den2, num1, den1]; }
+  const a = { num: num1, den: den1 }, b = { num: num2, den: den2 };
+  const result = subFractions(a, b);
+  const correctStr = fmtFrac(result);
+  return { mode: "arithmetic", exprText: `${fmtFrac(a)} - ${fmtFrac(b)}`, correct: [correctStr], decoys: fracDecoys(correctStr, result) };
+}
+function genMixedAddRound() {
+  const den1 = randInt(2, 8), den2 = randInt(2, 8);
+  const w1 = randInt(1, 4), w2 = randInt(1, 4);
+  const n1 = randInt(1, den1 - 1), n2 = randInt(1, den2 - 1);
+  const a = mixedToImproper(w1, n1, den1), b = mixedToImproper(w2, n2, den2);
+  const result = addFractions(a, b);
+  const correctStr = improperToMixedStr(result);
+  return { mode: "arithmetic", exprText: `${w1} ${n1}/${den1} + ${w2} ${n2}/${den2}`, correct: [correctStr], decoys: mixedDecoys(correctStr, result) };
+}
+function genMixedSubRound() {
+  let den1 = randInt(2, 8), den2 = randInt(2, 8);
+  let w1 = randInt(2, 5), w2 = randInt(1, w1);
+  let n1 = randInt(0, den1 - 1), n2 = randInt(0, den2 - 1);
+  let a = mixedToImproper(w1, n1, den1), b = mixedToImproper(w2, n2, den2);
+  if (a.num / a.den < b.num / b.den) { [w1, w2] = [w2, w1]; [n1, n2] = [n2, n1]; [den1, den2] = [den2, den1]; a = mixedToImproper(w1, n1, den1); b = mixedToImproper(w2, n2, den2); }
+  const result = subFractions(a, b);
+  const correctStr = improperToMixedStr(result);
+  return { mode: "arithmetic", exprText: `${w1} ${n1}/${den1} - ${w2} ${n2}/${den2}`, correct: [correctStr], decoys: mixedDecoys(correctStr, result) };
+}
+function genFracMultDivRound() {
+  const den = randInt(2, 8), num = randInt(1, den - 1);
+  const whole = randInt(2, 6);
+  if (Math.random() < 0.5) {
+    const g0 = gcd(num * whole, den) || 1;
+    const result = { num: (num * whole) / g0, den: den / g0 };
+    const correctStr = improperToMixedStr(result);
+    return { mode: "arithmetic", exprText: `${fmtFrac({ num, den })} × ${whole}`, correct: [correctStr], decoys: mixedDecoys(correctStr, result) };
+  }
+  const resultDen = den * whole;
+  const g1 = gcd(num, resultDen) || 1;
+  const result = { num: num / g1, den: resultDen / g1 };
+  const correctStr = fmtFrac(result);
+  return { mode: "arithmetic", exprText: `${fmtFrac({ num, den })} ÷ ${whole}`, correct: [correctStr], decoys: fracDecoys(correctStr, result) };
+}
+function genFracWordRound() {
+  const templates = [
+    () => { const d = randInt(3, 8); const n1 = randInt(1, d - 2); const n2 = randInt(1, d - 1 - n1); return { text: `Andi makan ${n1}/${d} bagian pizza dan adiknya makan ${n2}/${d} bagian. Berapa bagian pizza yang mereka makan semuanya?`, ans: { num: n1 + n2, den: d } }; },
+    () => { const d = randInt(4, 8); const n1 = randInt(d - 2, d - 1); const n2 = randInt(1, n1 - 1); return { text: `Sebuah tali panjangnya ${n1}/${d} meter. Dipotong sepanjang ${n2}/${d} meter. Berapa meter sisa tali itu?`, ans: { num: n1 - n2, den: d } }; },
+  ];
+  const picked = templates[randInt(0, templates.length - 1)]();
+  const g = gcd(Math.abs(picked.ans.num), picked.ans.den) || 1;
+  const result = { num: picked.ans.num / g, den: picked.ans.den / g };
+  const correctStr = fmtFrac(result);
+  return { mode: "wordproblem", storyText: picked.text, correct: [correctStr], decoys: fracDecoys(correctStr, result) };
+}
+function genFracOpBossRound() {
+  const gens = [genFracAddRound, genFracSubRound, genMixedAddRound, genMixedSubRound];
+  return gens[randInt(0, gens.length - 1)]();
+}
+
+/* ==========================================================================
+   KELAS 5 — "Terapan Menetapkan" topic generators (Lessons 41-44)
+   ========================================================================== */
+function genOperationMatchRound() {
+  const scenarios = [
+    { textKey: "scenarioCombine", op: "+" },
+    { textKey: "scenarioTakeAway", op: "-" },
+    { textKey: "scenarioGroups", op: "×" },
+    { textKey: "scenarioShare", op: "÷" },
+  ];
+  const picked = shuffle(scenarios.slice()).slice(0, 3);
+  const pairs = picked.map(s => ({ leftHtml: t(s.textKey), rightHtml: s.op }));
+  const rightOrder = shuffle(pairs.map((_, i) => i));
+  return { mode: "match", promptKey: "operationMatchPrompt", pairs, rightOrder };
+}
+function genMixedWordRound() {
+  const total = randInt(20, 60), d = randInt(3, 6);
+  const usedNum = randInt(1, d - 1);
+  const used = Math.round(total * usedNum / d);
+  const text = `Kelas punya ${total} pensil. ${usedNum}/${d} bagian sudah dipakai. Berapa pensil yang sudah dipakai?`;
+  const correct = String(used).split("");
+  return { mode: "wordproblem", storyText: text, correct, decoys: digitDecoys(correct) };
+}
+function genTerapanBossRound() {
+  return Math.random() < 0.5 ? genOperationMatchRound() : genMixedWordRound();
 }
 
 /* ==========================================================================
@@ -2471,6 +2700,23 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "compare6") rounds.push(genCompare6Round());
     else if (lvl.type === "order6") rounds.push(genOrder6Round());
     else if (lvl.type === "mixed6") rounds.push(genMixed6Round());
+    else if (lvl.type === "add6") rounds.push(genAdd6Round());
+    else if (lvl.type === "sub6") rounds.push(genSub6Round());
+    else if (lvl.type === "mult6") rounds.push(genMult6Round());
+    else if (lvl.type === "div6") rounds.push(genDiv6Round());
+    else if (lvl.type === "estimate6") rounds.push(genEstimate6Round());
+    else if (lvl.type === "wordproblem6") rounds.push(genWordProblem6Round());
+    else if (lvl.type === "opboss6") rounds.push(genOpBoss6Round());
+    else if (lvl.type === "fracadd") rounds.push(genFracAddRound());
+    else if (lvl.type === "mixedadd") rounds.push(genMixedAddRound());
+    else if (lvl.type === "fracsub") rounds.push(genFracSubRound());
+    else if (lvl.type === "mixedsub") rounds.push(genMixedSubRound());
+    else if (lvl.type === "fracmultdiv") rounds.push(genFracMultDivRound());
+    else if (lvl.type === "fracword") rounds.push(genFracWordRound());
+    else if (lvl.type === "fracopboss") rounds.push(genFracOpBossRound());
+    else if (lvl.type === "terapanmatch") rounds.push(genOperationMatchRound());
+    else if (lvl.type === "terapanword") rounds.push(genMixedWordRound());
+    else if (lvl.type === "terapanboss") rounds.push(genTerapanBossRound());
   }
   return rounds;
 }
@@ -2614,12 +2860,109 @@ const TOPICS_BILANGAN5 = [
   },
 ];
 
+const LEVELS_OPCACAH5 = [
+  { id: 1, emoji: "➕", color: "l1", type: "add6",
+    name: { id: "Penjumlahan", en: "Addition", ru: "Сложение" },
+    desc: { id: "Bilangan banyak digit", en: "Multi-digit numbers", ru: "Многозначные числа" } },
+  { id: 2, emoji: "➖", color: "l2", type: "sub6",
+    name: { id: "Pengurangan", en: "Subtraction", ru: "Вычитание" },
+    desc: { id: "Bilangan banyak digit", en: "Multi-digit numbers", ru: "Многозначные числа" } },
+  { id: 3, emoji: "✖️", color: "l3", type: "mult6",
+    name: { id: "Perkalian", en: "Multiplication", ru: "Умножение" },
+    desc: { id: "Satu digit dan banyak digit", en: "One-digit and multi-digit", ru: "Однозначные и многозначные" } },
+  { id: 4, emoji: "➗", color: "l5", type: "div6",
+    name: { id: "Pembagian", en: "Division", ru: "Деление" },
+    desc: { id: "Termasuk pembagian bersisa", en: "Including division with remainder", ru: "Включая деление с остатком" } },
+  { id: 5, emoji: "🎯", color: "l6", type: "estimate6",
+    name: { id: "Estimasi", en: "Estimation", ru: "Оценка" },
+    desc: { id: "Perkirakan hasilnya", en: "Estimate the result", ru: "Оцени результат" } },
+  { id: 6, emoji: "💰", color: "l2", type: "wordproblem6",
+    name: { id: "Soal Cerita", en: "Word Problems", ru: "Текстовые задачи" },
+    desc: { id: "Uang dan soal bertahap", en: "Money and multi-step problems", ru: "Деньги и многошаговые задачи" } },
+  { id: 7, emoji: "🕵️", color: "l4", type: "opboss6",
+    name: { id: "Detektif Operasi", en: "Operation Detective", ru: "Детектив операций" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_OPPECAHAN5 = [
+  { id: 1, emoji: "🍕", color: "l1", type: "fracadd",
+    name: { id: "Penjumlahan Pecahan", en: "Adding Fractions", ru: "Сложение дробей" },
+    desc: { id: "Penyebut sama atau beda", en: "Same or different denominators", ru: "Разные знаменатели тоже" } },
+  { id: 2, emoji: "🍰", color: "l2", type: "mixedadd",
+    name: { id: "Penjumlahan Campuran", en: "Adding Mixed Numbers", ru: "Сложение смешанных чисел" },
+    desc: { id: "Bilangan campuran", en: "Mixed numbers", ru: "Смешанные числа" } },
+  { id: 3, emoji: "🥧", color: "l3", type: "fracsub",
+    name: { id: "Pengurangan Pecahan", en: "Subtracting Fractions", ru: "Вычитание дробей" },
+    desc: { id: "Penyebut sama atau beda", en: "Same or different denominators", ru: "Разные знаменатели тоже" } },
+  { id: 4, emoji: "🎂", color: "l5", type: "mixedsub",
+    name: { id: "Pengurangan Campuran", en: "Subtracting Mixed Numbers", ru: "Вычитание смешанных чисел" },
+    desc: { id: "Termasuk meminjam", en: "Including borrowing", ru: "Включая заём" } },
+  { id: 5, emoji: "✖️", color: "l6", type: "fracmultdiv",
+    name: { id: "Kali & Bagi Pecahan", en: "Multiply & Divide Fractions", ru: "Умножение и деление дробей" },
+    desc: { id: "Dengan bilangan asli", en: "By a whole number", ru: "На натуральное число" } },
+  { id: 6, emoji: "📖", color: "l2", type: "fracword",
+    name: { id: "Soal Cerita Pecahan", en: "Fraction Word Problems", ru: "Текстовые задачи с дробями" },
+    desc: { id: "Penjumlahan dan pengurangan", en: "Addition and subtraction", ru: "Сложение и вычитание" } },
+  { id: 7, emoji: "🕵️", color: "l4", type: "fracopboss",
+    name: { id: "Detektif Operasi Pecahan", en: "Fraction Operation Detective", ru: "Детектив операций с дробями" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+const LEVELS_TERAPAN5 = [
+  { id: 1, emoji: "🔗", color: "l1", type: "terapanmatch",
+    name: { id: "Pilih Operasi", en: "Choose the Operation", ru: "Выбери действие" },
+    desc: { id: "Pasangkan situasi dengan operasinya", en: "Match the situation to its operation", ru: "Соедини ситуацию с действием" } },
+  { id: 2, emoji: "🧮", color: "l3", type: "terapanword",
+    name: { id: "Soal Campuran", en: "Combined Problems", ru: "Смешанные задачи" },
+    desc: { id: "Bilangan cacah dan pecahan", en: "Whole numbers and fractions", ru: "Целые числа и дроби" } },
+  { id: 3, emoji: "🕵️", color: "l4", type: "terapanboss",
+    name: { id: "Detektif Terapan", en: "Applied Detective", ru: "Детектив прикладных задач" },
+    desc: { id: "Level BOS!", en: "BOSS level!", ru: "Уровень БОСС!" } },
+];
+
+const TOPICS_OPERASI5 = [
+  {
+    id: "opcacah5", emoji: "🧮", levels: LEVELS_OPCACAH5,
+    name: { id: "Kamp Hitung Besar", en: "Big Calc Camp", ru: "Большой лагерь счёта" },
+    subtitle: { id: "Operasi Bilangan Cacah (9 pelajaran)", en: "Whole Number Operations (9 lessons)", ru: "Операции с целыми числами (9 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 9 pelajaran topik \"Operasi Bilangan Cacah\" (Kelas 5, Router Matematika, G5-L06 s/d G5-L14).",
+      en: "This game generates unlimited new questions for all 9 lessons of the \"Whole Number Operations\" topic (Grade 5 Math Router, G5-L06 to G5-L14).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 9 уроков темы «Операции с целыми числами» (Класс 5, роутер математики, G5-L06 — G5-L14).",
+    },
+  },
+  {
+    id: "oppecahan5", emoji: "🥧", levels: LEVELS_OPPECAHAN5,
+    name: { id: "Dapur Pecahan", en: "Fraction Kitchen", ru: "Кухня дробей" },
+    subtitle: { id: "Operasi Pecahan (8 pelajaran)", en: "Fraction Operations (8 lessons)", ru: "Операции с дробями (8 уроков)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 8 pelajaran topik \"Operasi Pecahan\" (Kelas 5, Router Matematika, G5-L33 s/d G5-L40).",
+      en: "This game generates unlimited new questions for all 8 lessons of the \"Fraction Operations\" topic (Grade 5 Math Router, G5-L33 to G5-L40).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 8 уроков темы «Операции с дробями» (Класс 5, роутер математики, G5-L33 — G5-L40).",
+    },
+  },
+  {
+    id: "terapan5", emoji: "🧠", levels: LEVELS_TERAPAN5,
+    name: { id: "Markas Terapan", en: "Applied Problems HQ", ru: "Штаб прикладных задач" },
+    subtitle: { id: "Terapan Menetapkan (4 pelajaran)", en: "Applied Problem Solving (4 lessons)", ru: "Прикладные задачи (4 урока)" },
+    sourceNote: {
+      id: "Game ini membuat soal baru tanpa batas untuk 4 pelajaran topik \"Terapan Menetapkan\" (Kelas 5, Router Matematika, G5-L41 s/d G5-L44).",
+      en: "This game generates unlimited new questions for all 4 lessons of the \"Applied Problem Solving\" topic (Grade 5 Math Router, G5-L41 to G5-L44).",
+      ru: "Игра генерирует бесконечное число новых заданий для всех 4 уроков темы «Прикладные задачи» (Класс 5, роутер математики, G5-L41 — G5-L44).",
+    },
+  },
+];
+
 const BLOCKS = [
   {
     id: "bilangan", emoji: "🔢", topics: TOPICS_BILANGAN5,
     name: { id: "Bilangan", en: "Numbers", ru: "Числа" },
     desc: { id: "4 distrik · 27 stasiun", en: "4 districts · 27 stations", ru: "4 района · 27 станций" },
     story: { key: "kingdomStoryK5" },
+  },
+  {
+    id: "operasi5", emoji: "⚔️", topics: TOPICS_OPERASI5,
+    name: { id: "Operasi Aritmetika", en: "Arithmetic Operations", ru: "Арифметические действия" },
+    desc: { id: "3 distrik · 17 stasiun", en: "3 districts · 17 stations", ru: "3 района · 17 станций" },
+    story: { key: "arenaStoryK5" },
   },
 ];
 
@@ -2667,6 +3010,9 @@ const CHARACTER_BY_TYPE = {
   frackind: "nina", fracmixedmatch: "dara", fracline: "kumar", equivtable: "dara",
   fcompare5: "kumar", forder5: "kumar", pecahanboss: "baron",
   read6: "robi", write6: "robi", placevalue6: "dara", compare6: "kumar", order6: "kumar", mixed6: "baron",
+  add6: "robi", sub6: "robi", mult6: "dara", div6: "dara", estimate6: "kumar", wordproblem6: "kumar", opboss6: "baron",
+  fracadd: "robi", mixedadd: "robi", fracsub: "robi", mixedsub: "robi", fracmultdiv: "dara", fracword: "kumar", fracopboss: "baron",
+  terapanmatch: "dara", terapanword: "kumar", terapanboss: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -2690,11 +3036,15 @@ const DISTRICT_IMAGES = {
   cacah100rb: IMAGES.kotaAngka,
   pecahan5: IMAGES.pasarPecahan,
   cacah1jt: IMAGES.monorailJourney,
+  opcacah5: IMAGES.inventorsWorkshop,
+  oppecahan5: IMAGES.pasarPecahan,
+  terapan5: IMAGES.riverRescue,
 };
 const BLOCK_IMAGES = {
   bilangan: IMAGES.kingdom,
+  operasi5: IMAGES.kingdom,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -2957,7 +3307,7 @@ function renderMap() {
 function setupRound() {
   const lvl = currentLevels()[state.levelIndex];
   const r = state.rounds[state.roundIndex];
-  if ((["read", "write", "add", "sub", "mixedop", "mult", "div", "gcdlcm", "moneyword", "multistep", "unknownadd", "unknownsub", "unknownboss", "patterngrow", "patternshrink", "patternboss", "compose", "decompose", "spatialboss", "area", "volume", "luasboss", "lengthconv", "weightconv", "measureboss", "pictogram", "barchart", "databoss1", "databoss2", "read5", "write5"].includes(lvl.type) || r.mode === "table" || r.mode === "arithmetic" || r.mode === "shapecount" || r.mode === "pattern" || r.mode === "toDigits" || r.mode === "toWords" || r.mode === "fromDescription") && r.correct) {
+  if ((["read", "write", "add", "sub", "mixedop", "mult", "div", "gcdlcm", "moneyword", "multistep", "unknownadd", "unknownsub", "unknownboss", "patterngrow", "patternshrink", "patternboss", "compose", "decompose", "spatialboss", "area", "volume", "luasboss", "lengthconv", "weightconv", "measureboss", "pictogram", "barchart", "databoss1", "databoss2", "read5", "write5"].includes(lvl.type) || r.mode === "table" || r.mode === "arithmetic" || r.mode === "shapecount" || r.mode === "pattern" || r.mode === "toDigits" || r.mode === "toWords" || r.mode === "fromDescription" || r.mode === "wordproblem") && r.correct) {
     state.pool = shuffle([...r.correct, ...r.decoys]);
     state.slot = [];
   } else if (r.mode === "match") {
@@ -3071,6 +3421,11 @@ function renderLevel() {
   else if (lvl.type === "compare6") container.appendChild(renderCompare(lvl));
   else if (lvl.type === "order6") container.appendChild(renderOrder(lvl));
   else if (lvl.type === "mixed6") container.appendChild(renderMixed(lvl));
+  else if (["add6", "sub6", "mult6", "div6", "wordproblem6", "opboss6"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "estimate6") container.appendChild(renderEstimate(lvl));
+  else if (["fracadd", "mixedadd", "fracsub", "mixedsub", "fracmultdiv", "fracword", "fracopboss", "terapanword"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
+  else if (lvl.type === "terapanmatch") container.appendChild(renderMatch(lvl));
+  else if (lvl.type === "terapanboss") container.appendChild(renderTerapanBoss(lvl));
 
   return container;
 }
@@ -4710,6 +5065,24 @@ function checkTrueGrid(r, idx, guess) {
 
 /* Boss dispatcher for topics whose sub-generators each use a different
    mechanic — delegates by round mode, same pattern as renderDataChart. */
+function renderTerapanBoss(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (r.mode === "match") return renderMatch(lvl);
+  return renderAssemble(lvl);
+}
+function renderEstimate(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t("estimatePrompt", { expr: r.exprText })));
+  appendHotspotGrid(panel, lvl, r.optionOrder.map(fmt), (idx, cell, stage) => checkMc(r, idx, cell, stage));
+  return panel;
+}
+
 function renderKpkFpbBoss(lvl) {
   const r = state.rounds[state.roundIndex];
   if (r.mode === "multiselect") return renderMultiSelect(lvl);
