@@ -392,6 +392,41 @@
   .match-item.selected { background: var(--l5); color: white; }
   .match-item.matched { background: var(--good); color: white; opacity: .55; cursor: default; }
 
+  /* ---------- NEW MECHANIC: memory cards — flip two, find the pair ---------- */
+  .memory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; max-width: 420px; margin: 0 auto; }
+  .memory-card {
+    aspect-ratio: 3 / 2; border-radius: 12px; border: 2.5px solid var(--ink);
+    font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 13px; text-align: center;
+    display: flex; align-items: center; justify-content: center; padding: 4px;
+    cursor: pointer; box-shadow: 3px 3px 0 var(--shadow-col); transition: transform .12s ease, background .15s ease;
+    background: var(--l5); color: var(--paper);
+  }
+  .memory-card:active { transform: translate(1px, 1px); }
+  .memory-card.flipped { background: var(--paper); color: var(--ink); }
+  .memory-card.matched { background: var(--good); color: white; opacity: .55; cursor: default; }
+  .memory-card.wrong-pair { background: var(--bad); color: white; }
+
+  /* ---------- NEW MECHANIC: slider — tap the track to place the handle ---------- */
+  .slider-wrap { width: 100%; max-width: 460px; margin: 6px auto 0; padding-bottom: 22px; }
+  .slider-track {
+    position: relative; height: 44px; margin: 0 18px; background: var(--paper);
+    border: 3px solid var(--ink); border-radius: 22px; cursor: pointer; box-shadow: 3px 3px 0 var(--shadow-col);
+  }
+  .slider-tick { position: absolute; top: 50%; width: 2px; height: 12px; background: var(--ink); opacity: .35; transform: translate(-50%, -50%); }
+  .slider-tick-label {
+    position: absolute; top: 100%; transform: translateX(-50%); margin-top: 4px;
+    font-family: 'Karla', sans-serif; font-size: 9.5px; font-weight: 700; color: var(--text-dim); white-space: nowrap;
+  }
+  .slider-handle {
+    position: absolute; top: 50%; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--l5); border: 3px solid var(--ink); transform: translate(-50%, -50%);
+    box-shadow: 2px 2px 0 var(--shadow-col); display: flex; align-items: center; justify-content: center;
+    font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 9.5px; color: white;
+    transition: left .15s ease; pointer-events: none;
+  }
+  .slider-track.correct .slider-handle { background: var(--good); }
+  .slider-track.wrong .slider-handle { background: var(--bad); }
+
   /* ---------- Kelas 5: Table fill-in ---------- */
   .fill-table { display: grid; gap: 6px; width: 100%; max-width: 420px; margin: 4px auto 12px; }
   .fill-cell {
@@ -628,6 +663,7 @@ const UI = {
     dataDiffPrompt: "Berapa selisih antara {a} dan {b}?",
     dataStory: "📊 <b>Balai Data</b>: <b>Baron Nol</b> mengacaukan catatan dan grafik kerajaan! Bantu Koki Nina &amp; Pedagang Kumar merapikan datanya di setiap distrik.",
     matchPrompt: "Pasangkan setiap kartu di kiri dengan pasangannya di kanan!",
+    memoryPrompt: "Buka dua kartu, cari pasangannya!",
     tablePrompt: "Lengkapi tabel yang kosong!",
     multiSelectPrompt: "Ketuk SEMUA jawaban yang benar, lalu tekan periksa!",
     submitLabel: "✅ Periksa",
@@ -648,6 +684,7 @@ const UI = {
     fracNumberLinePrompt: "Letakkan pecahan <b>{frac}</b> pada garis bilangan!",
     equivTablePrompt: "Lengkapi pecahan senilai ini!",
     estimatePrompt: "Perkirakan hasil dari <b>{expr}</b> (bulatkan dulu)!",
+    sliderEstimatePrompt: "Ketuk garis di titik perkiraanmu untuk <b>{expr}</b> (bulatkan dulu)!",
     operationMatchPrompt: "Pasangkan setiap situasi dengan operasi yang tepat!",
     freqTablePrompt: "Lengkapi tabel frekuensi ini!",
     scenarioCombine: "Menggabungkan dua kelompok",
@@ -754,6 +791,7 @@ const UI = {
     dataDiffPrompt: "What is the difference between {a} and {b}?",
     dataStory: "📊 <b>Data Hall</b>: <b>Baron Zero</b> is scrambling the kingdom's records and charts! Help Baker Nina &amp; Trader Kumar tidy up the data in every district.",
     matchPrompt: "Match each card on the left with its pair on the right!",
+    memoryPrompt: "Flip two cards, find the matching pair!",
     tablePrompt: "Fill in the blank cells of the table!",
     multiSelectPrompt: "Tap ALL the correct answers, then check!",
     submitLabel: "✅ Check",
@@ -774,6 +812,7 @@ const UI = {
     fracNumberLinePrompt: "Place the fraction <b>{frac}</b> on the number line!",
     equivTablePrompt: "Fill in this equivalent fraction!",
     estimatePrompt: "Estimate the result of <b>{expr}</b> (round first)!",
+    sliderEstimatePrompt: "Tap the track where you estimate <b>{expr}</b> to be (round first)!",
     operationMatchPrompt: "Match each situation with the right operation!",
     freqTablePrompt: "Fill in this frequency table!",
     scenarioCombine: "Combining two groups",
@@ -880,6 +919,7 @@ const UI = {
     dataDiffPrompt: "Какая разница между {a} и {b}?",
     dataStory: "📊 <b>Зал данных</b>: <b>Барон Ноль</b> путает записи и графики королевства! Помоги Пекарю Нине и Торговцу Кумару навести порядок в данных каждого района.",
     matchPrompt: "Соедини каждую карточку слева с парой справа!",
+    memoryPrompt: "Переверни две карточки, найди пару!",
     tablePrompt: "Заполни пустые ячейки таблицы!",
     multiSelectPrompt: "Нажми на ВСЕ правильные ответы, потом проверь!",
     submitLabel: "✅ Проверить",
@@ -900,6 +940,7 @@ const UI = {
     fracNumberLinePrompt: "Отметь дробь <b>{frac}</b> на числовой прямой!",
     equivTablePrompt: "Заполни эту равную дробь!",
     estimatePrompt: "Оцени результат <b>{expr}</b> (сначала округли)!",
+    sliderEstimatePrompt: "Нажми на шкале в точке своей оценки для <b>{expr}</b> (сначала округли)!",
     operationMatchPrompt: "Соедини каждую ситуацию с нужным действием!",
     freqTablePrompt: "Заполни эту таблицу частот!",
     scenarioCombine: "Объединение двух групп",
@@ -1285,14 +1326,9 @@ function genEstimate6Round() {
   const roundUnit = a > 999 || b > 999 ? 1000 : 100;
   const roundedA = Math.round(a / roundUnit) * roundUnit, roundedB = Math.round(b / roundUnit) * roundUnit;
   const estimate = isAdd ? roundedA + roundedB : Math.abs(roundedA - roundedB);
-  const optionsSet = new Set([estimate]);
-  while (optionsSet.size < 4) {
-    const decoy = estimate + randInt(1, 5) * roundUnit * (Math.random() < 0.5 ? 1 : -1);
-    if (decoy > 0) optionsSet.add(decoy);
-  }
-  const optionOrder = shuffle([...optionsSet]);
+  const min = Math.max(0, estimate - 3 * roundUnit), max = estimate + 3 * roundUnit;
   return {
-    kind: "mc_estimate", optionOrder, correctIndex: optionOrder.indexOf(estimate),
+    kind: "slider_estimate", correct: estimate, min, max, step: roundUnit,
     exprText: `${fmt(a)} ${isAdd ? "+" : "-"} ${fmt(b)}`,
   };
 }
@@ -3685,6 +3721,10 @@ const state = {
   currentPlayer: 0,
   matchLeft: null,
   matchDone: [],
+  memoryFirst: null,
+  memoryMatchedIds: [],
+  memoryPreviewSecond: null,
+  memoryLocked: false,
   multiSelected: [],
   sortPlaced: {},
   sortSelected: null,
@@ -3873,6 +3913,10 @@ function setupRound() {
   } else if (r.mode === "match") {
     state.matchLeft = null;
     state.matchDone = [];
+    state.memoryFirst = null;
+    state.memoryMatchedIds = [];
+    state.memoryPreviewSecond = null;
+    state.memoryLocked = false;
   } else if (r.mode === "multiselect") {
     state.multiSelected = [];
   } else if (r.mode === "sortbins") {
@@ -3990,9 +4034,9 @@ function renderLevel() {
   else if (lvl.type === "order6") container.appendChild(renderOrder(lvl));
   else if (lvl.type === "mixed6") container.appendChild(renderMixed(lvl));
   else if (["add6", "sub6", "mult6", "div6", "wordproblem6", "opboss6"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
-  else if (lvl.type === "estimate6") container.appendChild(renderEstimate(lvl));
+  else if (lvl.type === "estimate6") container.appendChild(renderSliderEstimate(lvl));
   else if (["fracadd", "mixedadd", "fracsub", "mixedsub", "fracmultdiv", "fracword", "fracopboss", "terapanword"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
-  else if (lvl.type === "terapanmatch") container.appendChild(renderMatch(lvl));
+  else if (lvl.type === "terapanmatch") container.appendChild(renderMemoryCards(lvl));
   else if (lvl.type === "terapanboss") container.appendChild(renderTerapanBoss(lvl));
   else if (["patternmul5", "patterndiv5", "unknowneq5", "aljabarboss5"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "freqtable") container.appendChild(renderTable(lvl));
@@ -5369,6 +5413,73 @@ function checkMatch(r, rightIdx) {
   }
 }
 
+/* ==========================================================================
+   NEW MECHANIC — Memory cards: flip two face-down cards, find the matching
+   pair. Pilot for the {pairs} round shape already used by "match" — same
+   round data, upgraded interaction (recall instead of column-matching).
+   ========================================================================== */
+function shuffleMemoryCards(pairs) {
+  const cards = [];
+  pairs.forEach((p, i) => {
+    cards.push({ pairId: i, content: p.leftHtml });
+    cards.push({ pairId: i, content: p.rightHtml });
+  });
+  return shuffle(cards);
+}
+function renderMemoryCards(lvl) {
+  const r = state.rounds[state.roundIndex];
+  if (!r.memoryCards) r.memoryCards = shuffleMemoryCards(r.pairs);
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t(r.promptKey || "memoryPrompt", r.promptVars)));
+
+  const grid = document.createElement("div");
+  grid.className = "memory-grid";
+  r.memoryCards.forEach((card, idx) => {
+    const isMatched = state.memoryMatchedIds.includes(card.pairId);
+    const isWrongPreview = state.memoryLocked && (idx === state.memoryFirst || idx === state.memoryPreviewSecond);
+    const isFlipped = isMatched || idx === state.memoryFirst || idx === state.memoryPreviewSecond;
+    const btn = document.createElement("button");
+    btn.className = "memory-card" + (isFlipped ? " flipped" : "") + (isMatched ? " matched" : "") + (isWrongPreview ? " wrong-pair" : "");
+    btn.innerHTML = isFlipped ? card.content : "❓";
+    btn.disabled = isMatched || isFlipped || state.memoryLocked;
+    btn.onclick = () => checkMemoryCard(r, idx);
+    grid.appendChild(btn);
+  });
+  panel.appendChild(grid);
+  return panel;
+}
+function checkMemoryCard(r, idx) {
+  if (state.memoryLocked) return;
+  if (state.memoryFirst === null) { state.memoryFirst = idx; render(); return; }
+  if (idx === state.memoryFirst) return;
+  const firstCard = r.memoryCards[state.memoryFirst], secondCard = r.memoryCards[idx];
+  if (firstCard.pairId === secondCard.pairId) {
+    state.memoryMatchedIds.push(firstCard.pairId);
+    state.memoryFirst = null;
+    burstConfetti();
+    setRobotMood("happy");
+    if (state.memoryMatchedIds.length === r.pairs.length) setTimeout(nextRound, 700);
+    else render();
+  } else {
+    state.memoryPreviewSecond = idx;
+    state.memoryLocked = true;
+    setRobotMood("sad");
+    state.mistakes++;
+    render();
+    setTimeout(() => {
+      state.memoryFirst = null;
+      state.memoryPreviewSecond = null;
+      state.memoryLocked = false;
+      render();
+    }, 700);
+  }
+}
+
 /* ---- 2. Table fill-in: a grid with several blanks, filled from a shared
    tile pool in reading order — reuses checkAssemble's sequence-match logic. ---- */
 function renderTable(lvl) {
@@ -5643,7 +5754,7 @@ function renderPengumpulanBoss(lvl) {
 }
 function renderTerapanBoss(lvl) {
   const r = state.rounds[state.roundIndex];
-  if (r.mode === "match") return renderMatch(lvl);
+  if (r.mode === "match") return renderMemoryCards(lvl);
   return renderAssemble(lvl);
 }
 function renderEstimate(lvl) {
@@ -5657,6 +5768,81 @@ function renderEstimate(lvl) {
   panel.appendChild(robotRow(t("estimatePrompt", { expr: r.exprText })));
   appendHotspotGrid(panel, lvl, r.optionOrder.map(fmt), (idx, cell, stage) => checkMc(r, idx, cell, stage));
   return panel;
+}
+
+/* ==========================================================================
+   NEW MECHANIC — Slider: tap anywhere on the track to place the handle at
+   the nearest tick. Pilot for estimate6 (round to the nearest 100/1000):
+   a continuous-feeling pick beats a flat MC list for an estimation skill.
+   ========================================================================== */
+function renderSliderEstimate(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-mixed";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t("sliderEstimatePrompt", { expr: r.exprText })));
+
+  const wrap = document.createElement("div");
+  wrap.className = "slider-wrap";
+  const track = document.createElement("div");
+  track.className = "slider-track";
+
+  const numTicks = Math.round((r.max - r.min) / r.step) + 1;
+  const showLabels = numTicks <= 9;
+  for (let i = 0; i < numTicks; i++) {
+    const val = r.min + i * r.step;
+    const pct = ((val - r.min) / (r.max - r.min)) * 100;
+    const tick = document.createElement("div");
+    tick.className = "slider-tick";
+    tick.style.left = pct + "%";
+    track.appendChild(tick);
+    if (showLabels) {
+      const label = document.createElement("div");
+      label.className = "slider-tick-label";
+      label.style.left = pct + "%";
+      label.textContent = fmt(val);
+      track.appendChild(label);
+    }
+  }
+  const handle = document.createElement("div");
+  handle.className = "slider-handle";
+  handle.style.left = "50%";
+  handle.textContent = "?";
+  track.appendChild(handle);
+
+  track.onclick = (e) => {
+    const rect = track.getBoundingClientRect();
+    const pct = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    const rawVal = r.min + pct * (r.max - r.min);
+    const snapped = Math.round(rawVal / r.step) * r.step;
+    checkSliderEstimate(r, snapped, track, handle);
+  };
+  wrap.appendChild(track);
+  panel.appendChild(wrap);
+  return panel;
+}
+function checkSliderEstimate(r, snapped, track, handle) {
+  const pct = ((snapped - r.min) / (r.max - r.min)) * 100;
+  handle.style.left = pct + "%";
+  handle.textContent = fmt(snapped);
+  if (snapped === r.correct) {
+    track.classList.add("correct");
+    burstConfetti();
+    setRobotMood("happy");
+    setTimeout(nextRound, 800);
+  } else {
+    track.classList.add("wrong");
+    setRobotMood("sad");
+    state.mistakes++;
+    setTimeout(() => {
+      track.classList.remove("wrong");
+      handle.textContent = "?";
+      handle.style.left = "50%";
+    }, 500);
+  }
 }
 
 function renderKpkFpbBoss(lvl) {

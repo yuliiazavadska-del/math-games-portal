@@ -489,6 +489,32 @@
   .compare-sign-btn.correct { background: var(--good); color: var(--paper); }
   .compare-sign-btn.wrong { background: var(--bad); color: var(--paper); }
 
+  /* ---------- Balance scale: tap the pan that's heavier, or the fulcrum for equal ---------- */
+  .balance-wrap { display: flex; flex-direction: column; align-items: center; margin: 4px auto 0; max-width: 420px; }
+  .balance-beam-svg { display: block; }
+  .balance-beam-group { transform-origin: 150px 58px; transition: transform .5s cubic-bezier(.34,1.4,.64,1); }
+  .balance-wrap.tilt-left .balance-beam-group { transform: rotate(-11deg); }
+  .balance-wrap.tilt-right .balance-beam-group { transform: rotate(11deg); }
+  .balance-wrap.shake .balance-beam-group { animation: balanceShake .4s ease; }
+  @keyframes balanceShake { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+  .balance-hit-row { display: flex; align-items: flex-end; justify-content: space-between; width: 300px; margin-top: -34px; gap: 10px; }
+  .balance-pan-btn {
+    flex: 1; min-height: 52px; border-radius: 14px; border: 3px solid var(--ink); background: var(--paper);
+    font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 18px; color: var(--ink);
+    cursor: pointer; box-shadow: 3px 3px 0 var(--shadow-col); transition: transform .12s ease;
+    display: flex; align-items: center; justify-content: center; padding: 6px 8px; text-align: center;
+  }
+  .balance-pan-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--shadow-col); }
+  .balance-eq-btn {
+    min-width: 44px; min-height: 44px; border-radius: 50%; border: 3px solid var(--ink); background: var(--paper-soft);
+    font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 18px; cursor: pointer;
+    box-shadow: 3px 3px 0 var(--shadow-col); transition: transform .12s ease; margin-bottom: 4px;
+  }
+  .balance-eq-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--shadow-col); }
+  .balance-pan-btn.correct, .balance-eq-btn.correct { background: var(--good); color: var(--paper); }
+  .balance-pan-btn.wrong, .balance-eq-btn.wrong { background: var(--bad); color: var(--paper); }
+  .balance-pan-btn.dim, .balance-eq-btn.dim { opacity: .35; pointer-events: none; }
+
   /* Urutkan (order) */
   .order-pool { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 18px; }
   .order-card {
@@ -665,6 +691,7 @@ const UI = {
     peluangPohonCoinCoin: "Sebuah koin dilempar 2 kali. Ada berapa total kemungkinan hasil?",
     peluangPohonCoinDie: "Sebuah koin dan sebuah dadu masing-masing dilempar sekali. Ada berapa total kemungkinan hasil?",
     peluangBandingPrompt: "Peluang mana yang lebih besar? Ketuk tanda yang benar!",
+    balanceComparePrompt: "Mana yang lebih berat? Ketuk cawannya! Kalau seimbang, ketuk tengahnya.",
     dataStory: "📊 <b>Balai Data</b>: <b>Baron Nol</b> mengacaukan catatan dan grafik kerajaan! Bantu Koki Nina &amp; Pedagang Kumar merapikan datanya di setiap distrik.",
     matchPrompt: "Pasangkan setiap kartu di kiri dengan pasangannya di kanan!",
     tablePrompt: "Lengkapi tabel yang kosong!",
@@ -830,6 +857,7 @@ const UI = {
     peluangPohonCoinCoin: "A coin is tossed twice. How many total possible outcomes are there?",
     peluangPohonCoinDie: "A coin and a die are each thrown once. How many total possible outcomes are there?",
     peluangBandingPrompt: "Which probability is bigger? Tap the correct sign!",
+    balanceComparePrompt: "Which side is heavier? Tap its pan! If they balance, tap the middle.",
     dataStory: "📊 <b>Data Hall</b>: <b>Baron Zero</b> is scrambling the kingdom's records and charts! Help Baker Nina &amp; Trader Kumar tidy up the data in every district.",
     matchPrompt: "Match each card on the left with its pair on the right!",
     tablePrompt: "Fill in the blank cells of the table!",
@@ -995,6 +1023,7 @@ const UI = {
     peluangPohonCoinCoin: "Монету подбрасывают 2 раза. Сколько всего возможных исходов?",
     peluangPohonCoinDie: "Монету и кубик бросают по одному разу. Сколько всего возможных исходов?",
     peluangBandingPrompt: "Какая вероятность больше? Нажми на правильный знак!",
+    balanceComparePrompt: "Какая сторона тяжелее? Нажми на чашу! Если равны — нажми на середину.",
     dataStory: "📊 <b>Зал данных</b>: <b>Барон Ноль</b> путает записи и графики королевства! Помоги Пекарю Нине и Торговцу Кумару навести порядок в данных каждого района.",
     matchPrompt: "Соедини каждую карточку слева с парой справа!",
     tablePrompt: "Заполни пустые ячейки таблицы!",
@@ -3160,7 +3189,7 @@ function genDecBoss6Round() {
 }
 function renderDecBoss6(lvl) {
   const r = state.rounds[state.roundIndex];
-  if (r.sign !== undefined) return renderDecCompare6(lvl);
+  if (r.sign !== undefined) return renderBalanceScale(lvl);
   if (r.list !== undefined) return renderDecOrder6(lvl);
   return renderAssemble(lvl);
 }
@@ -3271,6 +3300,82 @@ function renderRatioCompare(lvl) {
   panel.appendChild(stage);
   return panel;
 }
+
+/* ==========================================================================
+   NEW MECHANIC — Balance scale: tap the heavier pan, or the fulcrum for
+   equal. Pilot for the {aStr, bStr, sign} compare-round shape already used
+   by deccompare6 and ratiocompare — same round data, upgraded interaction.
+   ========================================================================== */
+function balanceScaleSVG() {
+  return `<svg class="balance-beam-svg" viewBox="0 0 300 120" width="260" height="104">
+    <polygon points="140,112 160,112 150,80" fill="var(--ink)"/>
+    <circle cx="150" cy="80" r="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+    <g class="balance-beam-group">
+      <line x1="40" y1="58" x2="260" y2="58" stroke="var(--ink)" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="150" cy="58" r="7" fill="var(--ink)"/>
+      <line x1="40" y1="58" x2="40" y2="82" stroke="var(--ink)" stroke-width="3"/>
+      <line x1="260" y1="58" x2="260" y2="82" stroke="var(--ink)" stroke-width="3"/>
+      <rect x="15" y="80" width="50" height="14" rx="7" fill="var(--paper)" stroke="var(--ink)" stroke-width="4"/>
+      <rect x="235" y="80" width="50" height="14" rx="7" fill="var(--paper)" stroke="var(--ink)" stroke-width="4"/>
+    </g>
+  </svg>`;
+}
+function renderBalanceScale(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const panel = document.createElement("div");
+  panel.className = "panel stage-duel";
+  const meta = document.createElement("div");
+  meta.className = "round-meta";
+  meta.innerHTML = `<span>${tr(lvl.name)}</span><span>${t("questionOf", { i: state.roundIndex + 1, n: state.rounds.length })}</span>`;
+  panel.appendChild(meta);
+  panel.appendChild(robotRow(t(lvl.type === "peluangbanding" ? "peluangBandingPrompt" : "balanceComparePrompt")));
+
+  const wrap = document.createElement("div");
+  wrap.className = "balance-wrap";
+  wrap.innerHTML = balanceScaleSVG();
+
+  const hitRow = document.createElement("div");
+  hitRow.className = "balance-hit-row";
+  const leftBtn = document.createElement("button");
+  leftBtn.className = "balance-pan-btn";
+  leftBtn.textContent = r.aStr;
+  const eqBtn = document.createElement("button");
+  eqBtn.className = "balance-eq-btn";
+  eqBtn.textContent = "=";
+  const rightBtn = document.createElement("button");
+  rightBtn.className = "balance-pan-btn";
+  rightBtn.textContent = r.bStr;
+  const allBtns = [leftBtn, eqBtn, rightBtn];
+
+  leftBtn.onclick = () => checkBalanceScale(r.sign === ">", "left", wrap, leftBtn, allBtns);
+  eqBtn.onclick = () => checkBalanceScale(r.sign === "=", "equal", wrap, eqBtn, allBtns);
+  rightBtn.onclick = () => checkBalanceScale(r.sign === "<", "right", wrap, rightBtn, allBtns);
+
+  hitRow.appendChild(leftBtn);
+  hitRow.appendChild(eqBtn);
+  hitRow.appendChild(rightBtn);
+  wrap.appendChild(hitRow);
+  panel.appendChild(wrap);
+  return panel;
+}
+function checkBalanceScale(isCorrect, side, wrap, btn, allBtns) {
+  if (isCorrect) {
+    btn.classList.add("correct");
+    allBtns.forEach(b => { if (b !== btn) b.classList.add("dim"); });
+    if (side === "left") wrap.classList.add("tilt-left");
+    else if (side === "right") wrap.classList.add("tilt-right");
+    burstConfetti();
+    setRobotMood("happy");
+    setTimeout(nextRound, 900);
+  } else {
+    btn.classList.add("wrong");
+    wrap.classList.add("shake");
+    setRobotMood("sad");
+    state.mistakes++;
+    setTimeout(() => { btn.classList.remove("wrong"); wrap.classList.remove("shake"); }, 400);
+  }
+}
+
 function genRatioProportionRound() {
   const a = randInt(2, 6), b = randInt(2, 6), k = randInt(2, 5), c = a * k;
   const correct = String(b * k).split("");
@@ -3291,7 +3396,7 @@ function renderRatioBoss(lvl) {
   const r = state.rounds[state.roundIndex];
   if (r.kind === "ratio_mc") return renderRatioWrite(lvl);
   if (r.mode === "table") return renderTable(lvl);
-  if (r.sign !== undefined) return renderRatioCompare(lvl);
+  if (r.sign !== undefined) return renderBalanceScale(lvl);
   return renderAssemble(lvl);
 }
 
@@ -3697,7 +3802,7 @@ function renderPeluangBoss(lvl) {
   const r = state.rounds[state.roundIndex];
   if (r.kind === "certainty_mc") return renderPeluangKlasifikasi(lvl);
   if (r.mode === "multiselect") return renderMultiSelect(lvl);
-  if (r.sign !== undefined) return renderPeluangBanding(lvl);
+  if (r.sign !== undefined) return renderBalanceScale(lvl);
   return renderAssemble(lvl);
 }
 
@@ -4751,13 +4856,13 @@ function renderLevel() {
   else if (lvl.type === "fracbarmodel") container.appendChild(renderFracBarModel(lvl));
   else if (lvl.type === "fracopboss6") container.appendChild(renderFracOpBoss6(lvl));
   else if (["frac2dec", "dec2frac"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
-  else if (lvl.type === "deccompare6") container.appendChild(renderDecCompare6(lvl));
+  else if (lvl.type === "deccompare6") container.appendChild(renderBalanceScale(lvl));
   else if (lvl.type === "decorder6") container.appendChild(renderDecOrder6(lvl));
   else if (lvl.type === "decboss6") container.appendChild(renderDecBoss6(lvl));
   else if (lvl.type === "ratiowrite") container.appendChild(renderRatioWrite(lvl));
   else if (["ratiosimplify", "ratiopartwhole", "ratioequiv", "ratioproportion", "ratiounit", "ratioword"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "ratiotable") container.appendChild(renderTable(lvl));
-  else if (lvl.type === "ratiocompare") container.appendChild(renderRatioCompare(lvl));
+  else if (lvl.type === "ratiocompare") container.appendChild(renderBalanceScale(lvl));
   else if (lvl.type === "ratioboss") container.appendChild(renderRatioBoss(lvl));
   else if (["waktukonversi", "waktudurasi", "waktu24jam", "waktuboss"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "kubusnet") container.appendChild(renderKubusNet(lvl));
@@ -4776,7 +4881,7 @@ function renderLevel() {
   else if (["peluangklasifikasi", "peluangskala"].includes(lvl.type)) container.appendChild(renderPeluangKlasifikasi(lvl));
   else if (lvl.type === "peluangdaftar") container.appendChild(renderMultiSelect(lvl));
   else if (["peluangpohon", "peluangkoin", "peluangdadu"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
-  else if (lvl.type === "peluangbanding") container.appendChild(renderPeluangBanding(lvl));
+  else if (lvl.type === "peluangbanding") container.appendChild(renderBalanceScale(lvl));
   else if (lvl.type === "peluangboss") container.appendChild(renderPeluangBoss(lvl));
   else if (lvl.type === "areacompare" || lvl.type === "datacompare") container.appendChild(renderAreaCompare(lvl));
   else if (["pictogram", "barchart", "databoss1", "databoss2"].includes(lvl.type)) container.appendChild(renderDataChart(lvl));
