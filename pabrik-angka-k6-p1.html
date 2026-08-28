@@ -186,7 +186,13 @@
     border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow-col);
     background-size: cover; background-position: center;
   }
-  .hotspot-spot {
+  /* .mc-opt prefix on every rule below is load-bearing: .hotspot-spot and
+     .mc-opt have equal specificity, and .mc-opt (the flat-grid MC style)
+     comes later in this stylesheet, so without the extra class it silently
+     wins the cascade — inflating markers to 19px/12px-padding flat-button
+     sizing instead of the compact pill this mechanic needs, which then
+     overlap each other and the shape art in the tiny hotspot-stage. */
+  .mc-opt.hotspot-spot {
     position: absolute; transform: translate(-50%, -50%);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
     min-width: 38px; max-width: 92px; padding: 3px 8px; border-radius: 10px;
@@ -195,11 +201,11 @@
     cursor: pointer; box-shadow: 2.5px 2.5px 0 var(--shadow-col);
     transition: transform .12s ease, opacity .12s ease;
   }
-  .hotspot-spot svg { max-width: 34px; height: auto; }
-  .hotspot-spot:hover { transform: translate(-50%, -50%) scale(1.08); }
-  .hotspot-spot:active { transform: translate(-50%, -50%) scale(0.95); }
-  .hotspot-spot.dim { opacity: .35; pointer-events: none; }
-  .hotspot-bell { font-size: 18px; padding: 4px 10px; }
+  .mc-opt.hotspot-spot svg { max-width: 34px; height: auto; }
+  .mc-opt.hotspot-spot:hover { transform: translate(-50%, -50%) scale(1.08); }
+  .mc-opt.hotspot-spot:active { transform: translate(-50%, -50%) scale(0.95); }
+  .mc-opt.hotspot-spot.dim { opacity: .35; pointer-events: none; }
+  .mc-opt.hotspot-spot.hotspot-bell { font-size: 18px; padding: 4px 10px; }
 
   /* ---------- Robot & speech ---------- */
   .robot-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; width: 100%; max-width: 1100px; }
@@ -6488,7 +6494,7 @@ function renderShapeMc(lvl) {
   panel.appendChild(robotRow(t(r.promptKey || "shapeMcPrompt")));
   const { stage, slots } = buildHotspotStage(bgImageFor(lvl), r.optionTypes.length);
   const shapeWrap = document.createElement("div");
-  shapeWrap.style.cssText = "position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2; filter:drop-shadow(2px 2px 0 var(--shadow-col)); max-width:80px;";
+  shapeWrap.style.cssText = "position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); pointer-events:none; filter:drop-shadow(2px 2px 0 var(--shadow-col)); max-width:80px;";
   shapeWrap.innerHTML = r.svg;
   stage.appendChild(shapeWrap);
   r.optionTypes.forEach((optType, idx) => {
