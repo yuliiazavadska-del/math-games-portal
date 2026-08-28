@@ -140,7 +140,7 @@
   /* ---------- Level map ---------- */
   .map { width: 100%; max-width: 1100px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
   .station {
-    border-radius: 20px; padding: 14px 10px; text-align: center;
+    border-radius: 16px; padding: 8px 8px; text-align: center;
     border: 3px solid var(--ink); cursor: pointer; color: var(--paper);
     box-shadow: 5px 5px 0 var(--shadow-col);
     transition: transform .15s ease, box-shadow .15s ease;
@@ -155,10 +155,10 @@
   @keyframes popIn { from { opacity: 0; transform: scale(.85) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
   .station:hover { transform: translateY(-4px) scale(1.02); box-shadow: 8px 10px 0 var(--shadow-col); }
   .station:active { transform: translate(2px,2px) scale(0.98); box-shadow: 3px 3px 0 var(--shadow-col); }
-  .station .emoji { font-size: 32px; display: block; margin-bottom: 4px; filter: drop-shadow(0 3px 0 rgba(0,0,0,0.15)); }
-  .station .name { font-weight: 800; font-size: 13.5px; margin-bottom: 3px; line-height: 1.2; }
+  .station .emoji { font-size: 24px; display: block; margin-bottom: 2px; filter: drop-shadow(0 3px 0 rgba(0,0,0,0.15)); }
+  .station .name { font-weight: 800; font-size: 12.5px; margin-bottom: 2px; line-height: 1.15; }
   .station .desc { font-family: 'Karla', sans-serif; font-size: 10px; font-weight: 700; opacity: 0.95; line-height: 1.25; }
-  .station .stars { margin-top: 6px; font-size: 15px; letter-spacing: 2px; color: var(--gold); text-shadow: 1px 1px 0 var(--ink); }
+  .station .stars { margin-top: 3px; font-size: 13px; letter-spacing: 2px; color: var(--gold); text-shadow: 1px 1px 0 var(--ink); }
   .station .infinity { position: absolute; top: 10px; right: 14px; font-size: 15px; background: rgba(255,255,255,0.25); border-radius: 999px; padding: 2px 7px; }
   .station.with-image { background-size: cover; background-position: var(--bg-pos, center); }
   .station.with-image::before {
