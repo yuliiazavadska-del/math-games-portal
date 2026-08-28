@@ -208,7 +208,7 @@
   .mc-opt.hotspot-spot.hotspot-bell { font-size: 18px; padding: 4px 10px; }
 
   /* ---------- Robot & speech ---------- */
-  .robot-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; width: 100%; max-width: 1100px; }
+  .robot-row { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; width: 100%; max-width: 1100px; }
   .robot-badge {
     width: 58px; height: 58px; min-width: 58px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-size: 32px; border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--shadow-col);
@@ -244,11 +244,11 @@
     border-radius: 22px; border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--shadow-col);
     margin-bottom: 12px; display: block;
   }
-  .scene-image.small { height: 130px; border-radius: 18px; box-shadow: 4px 4px 0 var(--shadow-col); margin-bottom: 10px; }
+  .scene-image.small { height: 60px; border-radius: 12px; box-shadow: 3px 3px 0 var(--shadow-col); margin-bottom: 4px; }
 
   /* ---------- Game panel ---------- */
   .panel { width: 100%; max-width: 1100px; background: var(--paper-soft); border-radius: 24px; padding: 16px 20px; border: 3px solid var(--ink); box-shadow: 6px 6px 0 var(--shadow-col); position: relative; overflow: hidden; }
-  .round-meta { display:flex; justify-content: space-between; font-family: 'Baloo2', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--l4); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; position: relative; z-index: 2; }
+  .round-meta { display:flex; justify-content: space-between; font-family: 'Baloo2', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--l4); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; position: relative; z-index: 2; }
 
   /* per-level stage dressing */
   .panel.stage-assemble { background-image: repeating-linear-gradient(135deg, transparent 0 22px, rgba(0,0,0,0.035) 22px 26px); }
@@ -263,7 +263,7 @@
   .number-card {
     font-size: 32px; font-weight: 800; text-align: center; letter-spacing: 1px;
     background: var(--paper); color: var(--l3-dark);
-    border-radius: 18px; padding: 10px; margin-bottom: 12px;
+    border-radius: 18px; padding: 10px; margin-bottom: 8px;
     border: 3px dashed var(--l3); font-variant-numeric: tabular-nums;
     position: relative;
   }
@@ -301,7 +301,7 @@
 
   .slot-row {
     min-height: 44px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-    background: var(--paper); border-radius: 14px; padding: 8px 10px; margin-bottom: 10px;
+    background: var(--paper); border-radius: 14px; padding: 8px 10px; margin-bottom: 6px;
     border: 3px solid var(--ink);
   }
   .slot-row .empty-hint { font-family: 'Karla', sans-serif; color: var(--text-dim); font-size: 12.5px; font-weight: 700; font-style: italic; }
@@ -387,7 +387,7 @@
   @keyframes stampIn { from { transform: translate(-50%,-50%) rotate(-14deg) scale(0); opacity: 0; } to { transform: translate(-50%,-50%) rotate(-14deg) scale(1); opacity: 1; } }
 
   /* Fix-it sentence — pinned to a "detective board" */
-  .sentence { display: flex; gap: 9px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; position: relative; padding-top: 10px; }
+  .sentence { display: flex; gap: 9px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; position: relative; padding-top: 6px; }
   .sentence .word { background: var(--paper); border: 2.5px solid var(--ink); padding: 11px 15px; border-radius: 12px; font-weight: 800; font-size: 17px; box-shadow: 3px 3px 0 var(--shadow-col); position: relative; }
   .sentence .word::before {
     content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-6deg);
@@ -814,11 +814,11 @@ function pieSVG(n, k, opts) {
 }
 function fracChip(f, color) {
   const wrap = document.createElement("div");
-  wrap.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:6px;";
-  wrap.innerHTML = pieSVG(f.den, f.num, { fill: color || "var(--l1)" });
+  wrap.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:3px;";
+  wrap.innerHTML = pieSVG(f.den, f.num, { size: 48, fill: color || "var(--l1)" });
   const label = document.createElement("div");
   label.className = "compare-num";
-  label.style.cssText = "font-size:22px; padding:8px 14px;";
+  label.style.cssText = "font-size:17px; padding:5px 10px;";
   label.textContent = fmtFrac(f);
   wrap.appendChild(label);
   return wrap;
@@ -3376,7 +3376,7 @@ function renderFEquivModel(lvl) {
   panel.appendChild(robotRow(t("fEquivModelPrompt")));
 
   const baseWrap = document.createElement("div");
-  baseWrap.style.cssText = "display:flex; justify-content:center; margin-bottom:16px;";
+  baseWrap.style.cssText = "display:flex; justify-content:center; margin-bottom:8px;";
   baseWrap.appendChild(fracChip(r.base, "var(--l3)"));
   panel.appendChild(baseWrap);
 
