@@ -207,6 +207,16 @@
   .mc-opt.hotspot-spot.dim { opacity: .35; pointer-events: none; }
   .mc-opt.hotspot-spot.hotspot-bell { font-size: 18px; padding: 4px 10px; }
 
+  /* ---------- NEW: Grand Boss Battle — HP bar chrome wrapping any mechanic ---------- */
+  .grand-boss-header { display: flex; align-items: center; gap: 6px; width: 100%; max-width: 1100px; margin: 0 auto; }
+  .grand-boss-avatar {
+    width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background-size: cover; background-position: center;
+    border: 2px solid var(--ink); box-shadow: 1.5px 1.5px 0 var(--shadow-col);
+  }
+  .grand-boss-hp-track { flex: 1; height: 10px; border-radius: 5px; border: 2px solid var(--ink); background: var(--paper); overflow: hidden; box-shadow: 1.5px 1.5px 0 var(--shadow-col); }
+  .grand-boss-hp-fill { height: 100%; background: linear-gradient(90deg, var(--bad), #ff8f6b); transition: width .5s ease; }
+  .grand-boss-hp-label { font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 9.5px; white-space: nowrap; }
+
   /* ---------- Robot & speech ---------- */
   .robot-row { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; width: 100%; max-width: 1100px; }
   .robot-badge {
@@ -1894,6 +1904,7 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "databoss1") rounds.push(genDataBossRound());
     else if (lvl.type === "datacompare") rounds.push(genDataCompareRound());
     else if (lvl.type === "databoss2") rounds.push(genDataBossRound());
+    else if (lvl.type === "grandboss") rounds.push(genGrandBossRound());
   }
   return rounds;
 }
@@ -2353,6 +2364,94 @@ const BLOCKS = [
   },
 ];
 
+/* ==========================================================================
+   GRAND BOSS BATTLE — one bonus "final showdown" level appended to every
+   block, mixing every topic's own boss round together under an HP-bar
+   battle screen instead of another flat quiz list.
+   ========================================================================== */
+function makeGrandBossTopic(block) {
+  return {
+    id: "grandboss", emoji: "🏆",
+    levels: [
+      { id: 1, emoji: "🏆", color: "l4", type: "grandboss",
+        name: { id: "Pertarungan Terakhir", en: "Final Showdown", ru: "Финальная битва" },
+        desc: { id: "Kalahkan Baron Nol!", en: "Defeat Baron Zero!", ru: "Победи Барона Ноля!" } },
+    ],
+    name: { id: `Pertarungan: ${block.name.id}`, en: `Showdown: ${block.name.en}`, ru: `Битва: ${block.name.ru}` },
+    subtitle: { id: "Boss besar gabungan semua distrik!", en: "The grand boss combining every district!", ru: "Большой босс, объединяющий все районы!" },
+    sourceNote: {
+      id: `Level bonus yang menggabungkan semua topik dalam blok "${block.name.id}".`,
+      en: `A bonus level combining every topic in the "${block.name.en}" block.`,
+      ru: `Бонусный уровень, объединяющий все темы блока «${block.name.ru}».`,
+    },
+  };
+}
+BLOCKS.forEach(b => b.topics.push(makeGrandBossTopic(b)));
+
+const GRAND_BOSS_POOLS = {
+  bilangan: [
+    { gen: genMixedRound, render: renderMixed },
+    { gen: genFMixedRound, render: renderFMixed },
+    { gen: genDMixedRound, render: renderDMixed },
+  ],
+  operasi: [
+    { gen: genOpBossRound, render: renderMixed },
+    { gen: genMdBossRound, render: renderMixed },
+    { gen: genFkBossRound, render: renderMixed },
+    { gen: genPmBossRound, render: renderMixed },
+  ],
+  aljabar: [
+    { gen: genUnknownBossRound, render: renderAssemble },
+    { gen: genPatternBossRound, render: renderAssemble },
+  ],
+  geometri: [
+    { gen: genShapeBossRound, render: renderShapeMc },
+    { gen: genSpatialBossRound, render: renderAssemble },
+  ],
+  pengukuran: [
+    { gen: genLuasBossRound, render: renderAssemble },
+    { gen: genMeasureBossRound, render: renderAssemble },
+  ],
+  data: [
+    { gen: genDataBossRound, render: renderDataChart },
+  ],
+};
+function genGrandBossRound() {
+  const blockId = BLOCKS[state.blockIndex].id;
+  const pool = GRAND_BOSS_POOLS[blockId] || GRAND_BOSS_POOLS.geometri;
+  const picked = pool[randInt(0, pool.length - 1)];
+  const round = picked.gen();
+  round.__renderer = picked.render;
+  return round;
+}
+function renderBigBossBattle(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const outer = document.createElement("div");
+  outer.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center;";
+  const hpMax = state.rounds.length;
+  const hpCurrent = Math.max(0, hpMax - state.roundIndex);
+  const header = document.createElement("div");
+  header.className = "grand-boss-header";
+  const avatar = document.createElement("div");
+  avatar.className = "grand-boss-avatar";
+  avatar.style.backgroundImage = `url(${IMAGES.baronNol})`;
+  const track = document.createElement("div");
+  track.className = "grand-boss-hp-track";
+  const fill = document.createElement("div");
+  fill.className = "grand-boss-hp-fill";
+  fill.style.width = (hpCurrent / hpMax * 100) + "%";
+  track.appendChild(fill);
+  const label = document.createElement("div");
+  label.className = "grand-boss-hp-label";
+  label.textContent = `${hpCurrent}/${hpMax}`;
+  header.appendChild(avatar);
+  header.appendChild(track);
+  header.appendChild(label);
+  outer.appendChild(header);
+  outer.appendChild(r.__renderer(lvl));
+  return outer;
+}
+
 function currentTopics() { return BLOCKS[state.blockIndex].topics; }
 function currentLevels() { return currentTopics()[state.topicIndex].levels; }
 function currentStars() { return state.stars[state.blockIndex][state.topicIndex]; }
@@ -2391,6 +2490,7 @@ const CHARACTER_BY_TYPE = {
   lengthconv: "kumar", weightconv: "kumar", measureboss: "baron",
   pictogram: "nina", barchart: "nina", databoss1: "baron",
   datacompare: "kumar", databoss2: "baron",
+  grandboss: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -2422,7 +2522,7 @@ const BLOCK_IMAGES = {
   aljabar: IMAGES.inventorsWorkshop, geometri: IMAGES.gardenMaze,
   pengukuran: IMAGES.bridgeRepair, data: IMAGES.lanternFestival,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "grandboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -2758,6 +2858,7 @@ function renderLevel() {
   else if (["triangleprop", "quadprop", "shapeboss"].includes(lvl.type)) container.appendChild(renderShapeMc(lvl));
   else if (lvl.type === "areacompare" || lvl.type === "datacompare") container.appendChild(renderAreaCompare(lvl));
   else if (["pictogram", "barchart", "databoss1", "databoss2"].includes(lvl.type)) container.appendChild(renderDataChart(lvl));
+  else if (lvl.type === "grandboss") container.appendChild(renderBigBossBattle(lvl));
 
   return container;
 }

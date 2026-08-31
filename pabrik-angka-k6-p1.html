@@ -520,6 +520,16 @@
   .balance-pan-btn.wrong, .balance-eq-btn.wrong { background: var(--bad); color: var(--paper); }
   .balance-pan-btn.dim, .balance-eq-btn.dim { opacity: .35; pointer-events: none; }
 
+  /* ---------- NEW: Grand Boss Battle — HP bar chrome wrapping any mechanic ---------- */
+  .grand-boss-header { display: flex; align-items: center; gap: 6px; width: 100%; max-width: 1100px; margin: 0 auto; }
+  .grand-boss-avatar {
+    width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background-size: cover; background-position: center;
+    border: 2px solid var(--ink); box-shadow: 1.5px 1.5px 0 var(--shadow-col);
+  }
+  .grand-boss-hp-track { flex: 1; height: 10px; border-radius: 5px; border: 2px solid var(--ink); background: var(--paper); overflow: hidden; box-shadow: 1.5px 1.5px 0 var(--shadow-col); }
+  .grand-boss-hp-fill { height: 100%; background: linear-gradient(90deg, var(--bad), #ff8f6b); transition: width .5s ease; }
+  .grand-boss-hp-label { font-family: 'Baloo2', sans-serif; font-weight: 800; font-size: 9.5px; white-space: nowrap; }
+
   /* Urutkan (order) */
   .order-pool { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 18px; }
   .order-card {
@@ -4013,6 +4023,7 @@ function generateLevelRounds(lvl) {
     else if (lvl.type === "peluangdadu") rounds.push(genPeluangDaduRound());
     else if (lvl.type === "peluangbanding") rounds.push(genPeluangBandingRound());
     else if (lvl.type === "peluangboss") rounds.push(genPeluangBossRound());
+    else if (lvl.type === "grandboss") rounds.push(genGrandBossRound());
     else if (lvl.type === "pictogram") rounds.push(genPictogramRound());
     else if (lvl.type === "barchart") rounds.push(genBarChartRound());
     else if (lvl.type === "databoss1") rounds.push(genDataBossRound());
@@ -4375,6 +4386,86 @@ const BLOCKS = [
   },
 ];
 
+/* ==========================================================================
+   GRAND BOSS BATTLE — one bonus "final showdown" level appended to every
+   block, mixing every topic's own boss round together under an HP-bar
+   battle screen instead of another flat quiz list.
+   ========================================================================== */
+function makeGrandBossTopic(block) {
+  return {
+    id: "grandboss", emoji: "🏆",
+    levels: [
+      { id: 1, emoji: "🏆", color: "l4", type: "grandboss",
+        name: { id: "Pertarungan Terakhir", en: "Final Showdown", ru: "Финальная битва" },
+        desc: { id: "Kalahkan Baron Nol!", en: "Defeat Baron Zero!", ru: "Победи Барона Ноля!" } },
+    ],
+    name: { id: `Pertarungan: ${block.name.id}`, en: `Showdown: ${block.name.en}`, ru: `Битва: ${block.name.ru}` },
+    subtitle: { id: "Boss besar gabungan semua distrik!", en: "The grand boss combining every district!", ru: "Большой босс, объединяющий все районы!" },
+    sourceNote: {
+      id: `Level bonus yang menggabungkan semua topik dalam blok "${block.name.id}".`,
+      en: `A bonus level combining every topic in the "${block.name.en}" block.`,
+      ru: `Бонусный уровень, объединяющий все темы блока «${block.name.ru}».`,
+    },
+  };
+}
+BLOCKS.forEach(b => b.topics.push(makeGrandBossTopic(b)));
+
+const GRAND_BOSS_POOLS = {
+  bilangan6: [
+    { gen: genFracOpBoss6Round, render: renderFracOpBoss6 },
+    { gen: genDecBoss6Round, render: renderDecBoss6 },
+  ],
+  aljabar6: [
+    { gen: genRatioBossRound, render: renderRatioBoss },
+  ],
+  pengukuran6: [
+    { gen: genWaktuBossRound, render: renderAssemble },
+  ],
+  geometri6: [
+    { gen: genKubusBossRound, render: renderKubusBoss },
+    { gen: genSpasialBossRound, render: renderSpasialBoss },
+    { gen: genGridBossRound, render: renderGridBoss },
+  ],
+  peluang6: [
+    { gen: genPeluangBossRound, render: renderPeluangBoss },
+  ],
+};
+function genGrandBossRound() {
+  const blockId = BLOCKS[state.blockIndex].id;
+  const pool = GRAND_BOSS_POOLS[blockId] || GRAND_BOSS_POOLS.geometri6;
+  const picked = pool[randInt(0, pool.length - 1)];
+  const round = picked.gen();
+  round.__renderer = picked.render;
+  return round;
+}
+function renderBigBossBattle(lvl) {
+  const r = state.rounds[state.roundIndex];
+  const outer = document.createElement("div");
+  outer.style.cssText = "width:100%; display:flex; flex-direction:column; align-items:center;";
+  const hpMax = state.rounds.length;
+  const hpCurrent = Math.max(0, hpMax - state.roundIndex);
+  const header = document.createElement("div");
+  header.className = "grand-boss-header";
+  const avatar = document.createElement("div");
+  avatar.className = "grand-boss-avatar";
+  avatar.style.backgroundImage = `url(${IMAGES.baronNol})`;
+  const track = document.createElement("div");
+  track.className = "grand-boss-hp-track";
+  const fill = document.createElement("div");
+  fill.className = "grand-boss-hp-fill";
+  fill.style.width = (hpCurrent / hpMax * 100) + "%";
+  track.appendChild(fill);
+  const label = document.createElement("div");
+  label.className = "grand-boss-hp-label";
+  label.textContent = `${hpCurrent}/${hpMax}`;
+  header.appendChild(avatar);
+  header.appendChild(track);
+  header.appendChild(label);
+  outer.appendChild(header);
+  outer.appendChild(r.__renderer(lvl));
+  return outer;
+}
+
 function currentTopics() { return BLOCKS[state.blockIndex].topics; }
 function currentLevels() { return currentTopics()[state.topicIndex].levels; }
 function currentStars() { return state.stars[state.blockIndex][state.topicIndex]; }
@@ -4439,6 +4530,7 @@ const CHARACTER_BY_TYPE = {
   spasialtampak: "dara", spasialtopcount: "dara", spasialmatch: "kumar", spasialrotate: "robi", spasialboss: "baron",
   gridbaca: "kumar", gridkoordinat: "kumar", gridlangkah: "dara", gridrute: "robi", gridjarak: "robi", gridtotal: "robi", gridmasalah: "nina", gridboss: "baron",
   peluangklasifikasi: "nina", peluangdaftar: "nina", peluangpohon: "dara", peluangskala: "nina", peluangkoin: "robi", peluangdadu: "robi", peluangbanding: "kumar", peluangboss: "baron",
+  grandboss: "baron",
 };
 function characterFor(lvl) { return CHARACTERS[CHARACTER_BY_TYPE[lvl.type] || "robi"]; }
 
@@ -4495,7 +4587,7 @@ const BLOCK_IMAGES = {
   geometri6: IMAGES.inventorsWorkshop,
   peluang6: IMAGES.lanternFestival,
 };
-const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss", "sudutboss", "kelilingboss", "luasboss5", "fracopboss6", "decboss6", "ratioboss", "waktuboss", "kubusboss", "spasialboss", "gridboss", "peluangboss"];
+const BOSS_TYPES = ["mixed", "fmixed", "dmixed", "opboss", "mdboss", "fkboss", "pmboss", "unknownboss", "patternboss", "shapeboss", "spatialboss", "luasboss", "measureboss", "databoss1", "databoss2", "mixed5", "kpkfpbboss", "pecahanboss", "mixed6", "opboss6", "fracopboss", "terapanboss", "aljabarboss5", "pengumpulanboss", "shapeboss", "geoboss", "sudutboss", "kelilingboss", "luasboss5", "fracopboss6", "decboss6", "ratioboss", "waktuboss", "kubusboss", "spasialboss", "gridboss", "peluangboss", "grandboss"];
 const CARD_POSITIONS = ["18% 30%", "82% 25%", "50% 55%", "20% 80%", "80% 78%", "50% 15%"];
 /* Fixed slots (percent x/y) for hotspot markers scattered over a scene image;
    shuffled + sliced per round so options never overlap. */
@@ -4888,6 +4980,7 @@ function renderLevel() {
   else if (["peluangpohon", "peluangkoin", "peluangdadu"].includes(lvl.type)) container.appendChild(renderAssemble(lvl));
   else if (lvl.type === "peluangbanding") container.appendChild(renderBalanceScale(lvl));
   else if (lvl.type === "peluangboss") container.appendChild(renderPeluangBoss(lvl));
+  else if (lvl.type === "grandboss") container.appendChild(renderBigBossBattle(lvl));
   else if (lvl.type === "areacompare" || lvl.type === "datacompare") container.appendChild(renderAreaCompare(lvl));
   else if (["pictogram", "barchart", "databoss1", "databoss2"].includes(lvl.type)) container.appendChild(renderDataChart(lvl));
   else if (lvl.type === "match" || lvl.type === "primematch") container.appendChild(renderMatch(lvl));
