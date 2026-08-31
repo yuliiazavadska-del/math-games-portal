@@ -292,6 +292,11 @@
   /* ---------- Geometri shape display ---------- */
   .shape-display { display: flex; justify-content: center; margin: 0; }
   .shape-display svg { filter: drop-shadow(3px 3px 0 var(--shadow-col)); max-height: 13vh; width: auto; }
+  /* Inline shape SVGs render at their own native width/height attributes
+     regardless of a parent's max-width, so without this the shape can
+     overflow its wrapper — invisible-looking on symmetric shapes, badly
+     off-center on asymmetric ones like a parallelogram. */
+  .shape-icon-wrap svg { display: block; width: 100%; height: auto; }
 
   /* ---------- Analisis Data: pictogram rows ---------- */
   .pictogram { display: flex; flex-direction: column; gap: 1px; width: 100%; max-width: 320px; }
@@ -5868,6 +5873,7 @@ function renderShapeMc(lvl) {
   panel.appendChild(robotRow(t(r.promptKey || "shapeMcPrompt")));
   const { stage, slots } = buildHotspotStage(bgImageFor(lvl), r.optionTypes.length);
   const shapeWrap = document.createElement("div");
+  shapeWrap.className = "shape-icon-wrap";
   shapeWrap.style.cssText = "position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); pointer-events:none; filter:drop-shadow(2px 2px 0 var(--shadow-col)); max-width:80px;";
   shapeWrap.innerHTML = r.svg;
   stage.appendChild(shapeWrap);
